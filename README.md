@@ -23,13 +23,17 @@ This application is a web server for managing and retrieving information about v
 2. Run `npm install` to install dependencies.
 3. Configure the `.env` file with the appropriate environment variables.
 4. Run `npm start` to start the server.
+   **The backend is running on an Express server, listening on port 5000.**
 
 ### API Endpoints
 
-#### Products
+- `/api/user`: Planned for user authentication (authRoute).
+- `/api/products`: For handling product-related operations (productsRoute).
 
-- **GET** `/api/products`: Retrieve all products.
-- **Additional routes**: Depending on your implementation in `productsRoute`.
+#### Routes
+
+- authRoute: Placeholder for future authentication handling.
+- productsRoute: Handles endpoints related to products.
 
 #### Authentication
 
@@ -46,6 +50,7 @@ This application is a web server for managing and retrieving information about v
 - `threshold_quantity`: Minimum threshold quantity.
 - `price`: Price of the product.
 - `price_per_unit`: Price per unit.
+- `supplier`: Name of the supplier.
 
 #### User Table
 
