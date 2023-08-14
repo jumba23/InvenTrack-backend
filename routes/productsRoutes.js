@@ -1,10 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const { formatResponse } = require("../utils");
 
 // GET all products
-router.get("/", (req, res) => {
-  // Logic for fetching all products
-  res.send("All products");
+
+router.get("/", async (req, res) => {
+  try {
+    const { data, error } = await req.supabase.from("Product").select("*");
+    if (error) throw error;
+    console.log("Fetched products:", data);
+    const formattedResponse = formatResponse(data);
+    res.json(formattedResponse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching products");
+  }
 });
 
 // ADD a new product

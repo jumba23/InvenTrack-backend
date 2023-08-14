@@ -13,29 +13,39 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function testConnection() {
-  const { data, error } = await supabase.from("Product").select("*");
+//In the context of a full-stack application with different domains for the frontend and backend (like this one)
+// you need to enable CORS (Cross-Origin Resource Sharing) to allow the frontend to access the backend.
+const cors = require("cors");
+app.use(cors());
 
-  if (error) {
-    console.error("Error connecting to Supabase:", error);
-  } else {
-    console.log("Connected to Supabase, fetched data:", data);
-  }
-}
+// async function testConnection() {
+//   const { data, error } = await supabase.from("Product").select("*");
 
-// Call the function to test the connection
-testConnection();
+//   if (error) {
+//     console.error("Error connecting to Supabase:", error);
+//   } else {
+//     console.log("Connected to Supabase, fetched data:", data);
+//   }
+// }
 
-//Import routes
-const authRoute = require("./routes/auth");
-const productsRoute = require("./routes/products");
+// // Call the function to test the connection
+// testConnection();
 
 //Middleware
 app.use(bodyParser.json());
+// attach supabase client
+app.use((req, res, next) => {
+  req.supabase = supabase;
+  next();
+});
+
+//Import routes
+const authRoute = require("./routes/authRoutes");
+const productsRoutes = require("./routes/productsRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
-app.use("/api/products", productsRoute);
+app.use("/api/products", productsRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
