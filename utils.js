@@ -15,7 +15,7 @@ const formatResponse = (inventory) => {
 const thresholdLevels = (item) => {
   if (item.quantity == 0) {
     return "Out of Stock";
-  } else if (item.quantity <= 2) {
+  } else if (item.quantity <= item.threshold_quantity) {
     return "Low Stock";
   } else {
     return "In Stock";
