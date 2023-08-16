@@ -22,9 +22,29 @@ router.get("/", async (req, res) => {
 // ADD a new product
 router.post("/", async (req, res) => {
   // Logic for adding a new product
-  const retVal = await updateProduct(req.body.product, req.supabase);
-  console.log("retVal", retVal);
-  res.send("Product added");
+  try {
+    const { data, error } = await req.supabase
+      .from("Products")
+      .insert({
+        product_id: 31,
+        name: "SPF 80 Sunscreen",
+        description: "Test Insert Product",
+        quantity: 1,
+        price: 23,
+        threshold_quantity: 1,
+        price_per_unit: 23,
+        supplier_id: "Mercer Group",
+        last_order_date: "2021-05-01",
+      })
+      .select();
+    if (error) throw error;
+    res.send("Product added");
+    console.log("data", data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching products");
+  }
+  // const retVal = await updateProduct(req.body.product, req.supabase);
 });
 
 // UPDATE a product
