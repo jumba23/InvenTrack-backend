@@ -35,31 +35,90 @@ This application is a web server for managing and retrieving information about v
 - authRoute: Placeholder for future authentication handling.
 - productsRoute: Handles endpoints related to products.
 
+#### Folder Structure
+
+- root
+  |- server.js
+  |- utils/
+  | |- index.js
+  |- controllers/
+  | |- authController.js
+  | |- productsController.js
+  |- routes/
+  | |- authRoutes.js
+  | |- productsRoutes.js
+  |- services/
+  | |- productServices.js
+  |- package.json
+  |- .env
+
+## Main Files Explained
+
+- controllers/: Contains all the logic for handling routes.
+- routes/: Defines your API endpoints and links them to the corresponding controller methods.
+- services/: Contains business logic and calls to the database.
+- utils/: A folder for utility functions, like the formatResponse function we have.
+- index.js: The entry point for application.
+- server.js: The entry point to your Node.js server. This is where you define your middleware, routes, and start your server.
+  - The reason we use bodyParser.json() is to be able to parse JSON bodies in the HTTP requests. This is essential for RESTful API development.
+  - req.supabase = supabase; allows your routes to access the Supabase client directly, centralizing your database operations.
+
+## Folders
+
+- routes: Contains all the routing logic.
+  - authRoutes.js: Holds routes related to authentication like signup and login.
+  - productsRoutes.js: Holds routes related to CRUD operations on products.
+- services: Currently empty, but can contain any centralized business logic in the future.
+
 #### Authentication
 
 - **Additional routes**: Authentication-related routes as implemented in `authRoute`.
 
 ### Database Schema
 
-#### Product Table
+#### Users Table
 
-- `product_id`: Unique identifier for the product.
-- `name`: Name of the product.
-- `description`: Description of the product.
-- `quantity`: Available quantity.
-- `threshold_quantity`: Minimum threshold quantity.
-- `price`: Price of the product.
-- `price_per_unit`: Price per unit.
-- `supplier`: Name of the supplier.
-
-#### User Table
-
-- `user_id`: Unique identifier for the user.
+- `user_id`: Unique identifier for the user.(PK)
 - `username`: Username.
 - `email`: Email address.
 - `password`: Encrypted password.
+- `full_name`: Full name.
 - `first_name`: First name.
 - `last_name`: Last name.
+- `role`: Role of the user.
+- `cell_number`: Cell number.
+- `created_at`: Account creation date.
+- `updated_at`: Account last updated date.
+
+#### Products Table
+
+- `product_id`: Unique identifier for the product.(PK)
+- `supplier_id`: Unique identifier for the supplier.(FK)
+- `user_id`: Unique identifier for the user.(FK)
+- `name`: Name of the product.
+- `long_description`: Description of the product.
+- `short_description`: Short description of the product.
+- `threshold_quantity`: Minimum threshold quantity.`
+- `price`: Price of the product.
+- `price_per_unit`: Price per unit.
+- `quantity`: Quantity of the product.
+
+#### Suppliers Table
+
+- `supplier_id`: Unique identifier for the user.(PK)
+- `user_id`: Unique identifier for the user.(FK)
+- `email`: Email address.
+- `name`: Full name.
+- `cell_number`: Cell number.
+- `created_at`: Account creation date.
+- `updated_at`: Account last updated date.
+
+#### Store Table
+
+- `store_id`: Unique identifier for the user.(PK)
+- `user_id`: Unique identifier for the user.(FK)
+- `name`: Full name of the store.
+- `address`: Address of the store.
 - `created_at`: Account creation date.
 - `updated_at`: Account last updated date.
 
@@ -83,5 +142,3 @@ This application is a web server for managing and retrieving information about v
 ### License
 
 - **Details**: Include licensing information, if applicable.
-
-Feel free to modify and expand this documentation according to the specifics of your application and any additional features or details you'd like to include! If you need further assistance or specific details, don't hesitate to ask.
