@@ -14,8 +14,13 @@ const getAllProducts = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
+    //test object to add to the database
     const newProduct = {
-      // your product object here, e.g., fetched from req.body
+      product_id: 11,
+      name: "SunShield Sunscreen SPF 80",
+      levels: "In Stock",
+      value: "$70",
+      last_ordered: "2022-01-04",
     };
     await productsService.addNewProduct(req.supabase, newProduct);
     res.send("Product added");
