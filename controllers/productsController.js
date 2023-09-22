@@ -15,7 +15,7 @@ const getAllProducts = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    const newProduct = req.body; // Get the body payload from the incoming HTTP request
+    const newProduct = req.body;
     console.log("New Product:", newProduct);
     await productsService.addNewProduct(req.supabase, newProduct);
     res.send("Product added");
