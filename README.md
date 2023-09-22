@@ -44,11 +44,14 @@ This application is a web server for managing and retrieving information about v
   |- controllers/
   | |- authController.js
   | |- productsController.js
+  | |- suppliersController.js
   |- routes/
   | |- authRoutes.js
   | |- productsRoutes.js
+  | |- suppliersRouters.js
   |- services/
   | |- productServices.js
+  | |- suppliersServices.js
   |- package.json
   |- .env
 
@@ -68,6 +71,7 @@ This application is a web server for managing and retrieving information about v
 - routes: Contains all the routing logic.
   - authRoutes.js: Holds routes related to authentication like signup and login.
   - productsRoutes.js: Holds routes related to CRUD operations on products.
+  - controllers: Contains all the logic for handling routes.
 - services: Currently empty, but can contain any centralized business logic in the future.
 
 #### Authentication
