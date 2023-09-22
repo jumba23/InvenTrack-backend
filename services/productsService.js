@@ -11,7 +11,7 @@ const fetchAllProducts = async (supabase) => {
 const addNewProduct = async (supabase, product) => {
   try {
     const { data, error } = await supabase
-      .from("Products")
+      .from("products")
       .insert(product)
       .select();
     if (error) throw error;

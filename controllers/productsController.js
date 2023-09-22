@@ -4,6 +4,7 @@ const { formatResponse } = require("../utils/index");
 const getAllProducts = async (req, res) => {
   try {
     const products = await productsService.fetchAllProducts(req.supabase);
+    console.log(products);
     const formattedResponse = formatResponse(products);
     res.json(formattedResponse);
   } catch (error) {
@@ -14,14 +15,8 @@ const getAllProducts = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    //test object to add to the database
-    const newProduct = {
-      product_id: 11,
-      name: "SunShield Sunscreen SPF 80",
-      levels: "In Stock",
-      value: "$70",
-      last_ordered: "2022-01-04",
-    };
+    const newProduct = req.body; // Get the body payload from the incoming HTTP request
+    console.log("New Product:", newProduct);
     await productsService.addNewProduct(req.supabase, newProduct);
     res.send("Product added");
   } catch (error) {
