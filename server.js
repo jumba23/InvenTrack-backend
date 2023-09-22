@@ -42,10 +42,12 @@ app.use((req, res, next) => {
 //Import routes
 const authRoute = require("./routes/authRoutes");
 const productsRoutes = require("./routes/productsRoutes");
+const suppliersRoutes = require("./routes/suppliersRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
 app.use("/api/products", productsRoutes);
+app.use("/api/suppliers", suppliersRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

@@ -1,6 +1,6 @@
-const fetchAllProducts = async (supabase) => {
+const fetchAllSuppliers = async (supabase) => {
   try {
-    const { data, error } = await supabase.from("products").select("*");
+    const { data, error } = await supabase.from("suppliers").select("*");
     if (error) throw error;
     return data;
   } catch (error) {
@@ -8,11 +8,11 @@ const fetchAllProducts = async (supabase) => {
   }
 };
 
-const addNewProduct = async (supabase, product) => {
+const addNewSupplier = async (supabase, supplier) => {
   try {
     const { data, error } = await supabase
-      .from("products")
-      .insert(product)
+      .from("suppliers")
+      .insert(supplier)
       .select();
     if (error) throw error;
     return data;
@@ -21,10 +21,10 @@ const addNewProduct = async (supabase, product) => {
   }
 };
 
-const fetchProductById = async (supabase, id) => {
+const fetchSupplierById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
-      .from("products")
+      .from("suppliers")
       .select("*")
       .eq("id", id)
       .single();
@@ -35,11 +35,11 @@ const fetchProductById = async (supabase, id) => {
   }
 };
 
-const updateProductById = async (supabase, id, product) => {
+const updateSupplierById = async (supabase, id, supplier) => {
   try {
     const { data, error } = await supabase
-      .from("products")
-      .update(product)
+      .from("suppliers")
+      .update(supplier)
       .eq("id", id)
       .single();
     if (error) throw error;
@@ -49,10 +49,10 @@ const updateProductById = async (supabase, id, product) => {
   }
 };
 
-const deleteProductById = async (supabase, id) => {
+const deleteSupplierById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
-      .from("products")
+      .from("suppliers")
       .delete()
       .eq("id", id);
     if (error) throw error;
@@ -63,9 +63,9 @@ const deleteProductById = async (supabase, id) => {
 };
 
 module.exports = {
-  fetchAllProducts,
-  addNewProduct,
-  fetchProductById,
-  updateProductById,
-  deleteProductById,
+  fetchAllSuppliers,
+  addNewSupplier,
+  fetchSupplierById,
+  updateSupplierById,
+  deleteSupplierById,
 };
