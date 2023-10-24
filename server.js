@@ -1,12 +1,13 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+require("dotenv").config();
 
 // Import supabase
 const { createClient } = require("@supabase/supabase-js");
 
-// Import dotenv
-require("dotenv").config();
+// Import middleware
+const authenticationToken = require("./middleware/authenticationToken");
 
 // Test connection to Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -43,11 +44,13 @@ app.use((req, res, next) => {
 const authRoute = require("./routes/authRoutes");
 const productsRoutes = require("./routes/productsRoutes");
 const suppliersRoutes = require("./routes/suppliersRoutes");
+const webhookRoutes = require("./routes/webhookRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
-app.use("/api/products", productsRoutes);
-app.use("/api/suppliers", suppliersRoutes);
+app.use("/api/products", authenticationToken, productsRoutes);
+app.use("/api/suppliers", authenticationToken, suppliersRoutes);
+app.use("/api/webhook", webhookRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

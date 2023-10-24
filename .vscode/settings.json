@@ -1,4 +1,5 @@
 {
   "workbench.preferredDarkColorTheme": "GitHub Dark",
-  "workbench.colorTheme": "GitHub Dark High Contrast"
+  "workbench.colorTheme": "GitHub Dark High Contrast",
+  "cSpell.words": ["supabase"]
 }
