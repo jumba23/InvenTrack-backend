@@ -1,4 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
+const to = require("to");
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -91,4 +92,19 @@ exports.login = async (req, res) => {
   // Store the token or session info on the server side or return it to the client
   // In this example, we'll return it to the client
   res.status(200).json({ user, token: session.access_token });
+};
+
+exports.logout = async (req, res) => {
+  const { token } = req.body;
+
+  if (token) {
+    // Implement your logout logic here, using Supabase
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+    // Return a success message
+    res.status(200).json({ message: "User logged out successfully" });
+  }
 };
