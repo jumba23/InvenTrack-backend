@@ -95,9 +95,9 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  const { token } = req.body;
-
-  if (token) {
+  const { logout } = req.body;
+  console.log("Server received req - logout", logout);
+  if (logout) {
     // Implement your logout logic here, using Supabase
     const { error } = await supabase.auth.signOut();
 
