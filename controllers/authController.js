@@ -77,14 +77,22 @@ exports.login = async (req, res) => {
 
   const { user, session } = data;
 
+  // Check if the user's email is verified
+  if (!user.email_confirmed_at) {
+    return res.status(400).json({ error: "Email not verified" });
+  }
+
+  // Check if session data exists
   if (!data.session) {
     return res.status(400).json({ error: "Session not created" });
   }
+
   // Store the token or session info on the server side or return it to the client
   // In this example, we'll return it to the client
   res.status(200).json({ user, token: session.access_token });
 };
 
+// supabase LOUGOUT method
 exports.logout = async (req, res) => {
   const { logout } = req.body;
   console.log("Server received req - logout", logout);
