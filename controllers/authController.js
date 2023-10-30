@@ -17,6 +17,13 @@ exports.signup = async (req, res) => {
   const { data, error } = await supabase.auth.signUp({
     email: email,
     password: password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        cell_number: cellNumber,
+      },
+    },
   });
 
   if (error) {
@@ -24,6 +31,8 @@ exports.signup = async (req, res) => {
   } else {
     console.log("data", data);
   }
+
+  const userData = data.user;
 
   // if (!user) {
   //   return res.status(400).json({ error: "User not created" });
@@ -34,19 +43,23 @@ exports.signup = async (req, res) => {
   // console.log("create user", user);
 
   // Once the user is successfully created, save additional profile data
-  // const { data, error: insertError } = await supabase.from("profiles").insert({
-  //   user_id: user.id,
-  //   first_name: firstName,
-  //   last_name: lastName,
-  //   cell_number: cellNumber,
-  // });
+  const { data: profile, error: insertError } = await supabase
+    .from("profiles")
+    .insert({
+      user_id: userData.user.id,
+      first_name: firstName,
+      last_name: lastName,
+      cell_number: cellNumber,
+    });
 
-  // if (insertError) {
-  //   return res.status(400).json({ error: insertError.message });
-  // }
+  if (insertError) {
+    return res.status(400).json({ error: insertError.message });
+  }
+
+  console.log("Profile data", profile);
 
   // Return both the user and their additional data
-  res.status(201).json({ user, profile: data });
+  res.status(201).json({ new_user: data });
 };
 
 exports.login = async (req, res) => {
@@ -64,18 +77,6 @@ exports.login = async (req, res) => {
   if (error) {
     return res.status(400).json({ error: error.message });
   }
-
-  // async function getUsers() {
-  //   try {
-  //     const { data, error } = await supabase.auth.api.listUsers();
-  //     if (error) throw error;
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
-
-  // getUsers();
 
   if (!data) {
     return res.status(400).json({ error: "User not found" });
