@@ -7,12 +7,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 exports.signup = async (req, res) => {
   const { email, password, firstName, lastName, cellNumber } = req.body;
 
-  console.log("email", email);
-  console.log("password", password);
-  console.log("firstName", firstName);
-  console.log("lastName", lastName);
-  console.log("cellNumber", cellNumber);
-
   // Implement your signup logic here, using Supabase
   const { data, error } = await supabase.auth.signUp({
     email: email,
@@ -32,21 +26,18 @@ exports.signup = async (req, res) => {
     console.log("data", data);
   }
 
-  const userData = data.user;
+  const userData = data?.user;
 
-  // if (!user) {
-  //   return res.status(400).json({ error: "User not created" });
-  // }
-
-  // Wait for 50 seconds to give the user time to click on the verification link
-  // await new Promise((resolve) => setTimeout(resolve, 50000));
-  // console.log("create user", user);
+  // Check if userData actually exists and contains an 'id'
+  if (!userData || !userData.id) {
+    return res.status(400).json({ error: "User data is incomplete." });
+  }
 
   // Once the user is successfully created, save additional profile data
   const { data: profile, error: insertError } = await supabase
     .from("profiles")
     .insert({
-      user_id: userData.user.id,
+      user_id: userData.id,
       first_name: firstName,
       last_name: lastName,
       cell_number: cellNumber,
