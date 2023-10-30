@@ -57,11 +57,8 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  console.log("server REQUEST - req.body", req.body);
-  console.log("server REQUEST - email", email);
-  console.log("server REQUEST - password", password);
 
-  // Implement your login logic here, again using Supabase for simplicity
+  // Supabase login logic
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
