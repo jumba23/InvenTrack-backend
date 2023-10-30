@@ -41,6 +41,8 @@ exports.signup = async (req, res) => {
       first_name: firstName,
       last_name: lastName,
       cell_number: cellNumber,
+      full_name: `${firstName} ${lastName}`,
+      email: email,
     });
 
   if (insertError) {
