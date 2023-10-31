@@ -86,9 +86,21 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: "Session not created" });
   }
 
+  console.log("User ID", user.id);
+  // check if the user has a profile. use user.id to query the "profiles" table in Supabase, under column "user_id"
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (profileError) {
+    return res.status(400).json({ error: profileError.message });
+  }
+
   // Store the token or session info on the server side or return it to the client
   // In this example, we'll return it to the client
-  res.status(200).json({ user, token: session.access_token });
+  res.status(200).json({ user, profile, token: session.access_token });
 };
 
 // supabase LOUGOUT method
