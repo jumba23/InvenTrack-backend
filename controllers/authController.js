@@ -58,7 +58,6 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Supabase login logic
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
@@ -68,26 +67,12 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 
-  if (!data) {
-    return res.status(400).json({ error: "User not found" });
-  }
-
-  console.log("Login Supabase data", data);
-
   const { user, session } = data;
 
-  // Check if the user's email is verified
   if (!user.email_confirmed_at) {
     return res.status(400).json({ error: "Email not verified" });
   }
 
-  // Check if session data exists
-  if (!data.session) {
-    return res.status(400).json({ error: "Session not created" });
-  }
-
-  console.log("User ID", user.id);
-  // check if the user has a profile. use user.id to query the "profiles" table in Supabase, under column "user_id"
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -98,8 +83,10 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: profileError.message });
   }
 
-  // Store the token or session info on the server side or return it to the client
-  // In this example, we'll return it to the client
+  // Store user info in session
+  req.session.user = { token: session.access_token };
+  console.log("Token in Session:", req.session.user.token);
+
   res.status(200).json({ user, profile, token: session.access_token });
 };
 

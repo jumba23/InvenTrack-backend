@@ -1,13 +1,12 @@
 const express = require("express");
-const app = express();
+const session = require("express-session");
+const cors = require("cors");
 const bodyParser = require("body-parser");
+const app = express();
 require("dotenv").config();
 
 // Import supabase
 const { createClient } = require("@supabase/supabase-js");
-
-// Import middleware
-const authenticationToken = require("./middleware/authenticationToken");
 
 // Test connection to Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -16,21 +15,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 //In the context of a full-stack application with different domains for the frontend and backend (like this one)
 // you need to enable CORS (Cross-Origin Resource Sharing) to allow the frontend to access the backend.
-const cors = require("cors");
 app.use(cors());
-
-// async function testConnection() {
-//   const { data, error } = await supabase.from("Product").select("*");
-
-//   if (error) {
-//     console.error("Error connecting to Supabase:", error);
-//   } else {
-//     console.log("Connected to Supabase, fetched data:", data);
-//   }
-// }
-
-// // Call the function to test the connection
-// testConnection();
 
 //Middleware
 app.use(bodyParser.json());
@@ -39,6 +24,15 @@ app.use((req, res, next) => {
   req.supabase = supabase;
   next();
 });
+//Configure the Session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true if using HTTPS
+  })
+);
 
 //Import routes
 const authRoute = require("./routes/authRoutes");
@@ -48,8 +42,8 @@ const webhookRoutes = require("./routes/webhookRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
-app.use("/api/products", authenticationToken, productsRoutes);
-app.use("/api/suppliers", authenticationToken, suppliersRoutes);
+app.use("/api/products", productsRoutes);
+app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
 
 // Error handling
