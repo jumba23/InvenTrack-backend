@@ -4,6 +4,9 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// TO DO - write a short explanation for this controller
+
+// SIGNUP method
 exports.signup = async (req, res) => {
   const { email, password, firstName, lastName, cellNumber } = req.body;
 
@@ -55,6 +58,7 @@ exports.signup = async (req, res) => {
   res.status(201).json({ new_user: data });
 };
 
+//LOGIN method
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -90,7 +94,7 @@ exports.login = async (req, res) => {
   res.status(200).json({ user, profile, token: session.access_token });
 };
 
-// supabase LOUGOUT method
+// LOUGOUT method
 exports.logout = async (req, res) => {
   const { logout } = req.body;
   console.log("Server received req - logout", logout);

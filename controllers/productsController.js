@@ -1,6 +1,7 @@
 const productsService = require("../services/productsService");
 const { formatResponse } = require("../utils/index");
 
+// GET ALL PRODUCTS method
 const getAllProducts = async (req, res) => {
   try {
     const products = await productsService.fetchAllProducts(req.supabase);
@@ -13,6 +14,7 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+// ADD PRODUCT method
 const addProduct = async (req, res) => {
   try {
     const newProduct = req.body;
@@ -25,6 +27,7 @@ const addProduct = async (req, res) => {
   }
 };
 
+// GET PRODUCT BY ID method
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,6 +40,7 @@ const getProductById = async (req, res) => {
   }
 };
 
+//
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,6 +53,7 @@ const updateProduct = async (req, res) => {
   }
 };
 
+// DELETE PRODUCT method
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,6 +1,7 @@
 const suppliersService = require("../services/suppliersService");
 const { formatResponse } = require("../utils/index");
 
+// GET ALL SUPPLIERS method
 const getAllSuppliers = async (req, res) => {
   try {
     const suppliers = await suppliersService.fetchAllSuppliers(req.supabase);
@@ -13,6 +14,7 @@ const getAllSuppliers = async (req, res) => {
   }
 };
 
+// ADD SUPPLIER method
 const addSupplier = async (req, res) => {
   try {
     const newSupplier = req.body;
@@ -25,6 +27,7 @@ const addSupplier = async (req, res) => {
   }
 };
 
+// GET SUPPLIER BY ID method
 const getSupplierById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,6 +40,7 @@ const getSupplierById = async (req, res) => {
   }
 };
 
+// UPDATE SUPPLIER method
 const updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
@@ -53,6 +57,7 @@ const updateSupplier = async (req, res) => {
   }
 };
 
+// DELETE SUPPLIER method
 const deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
