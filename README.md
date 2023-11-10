@@ -47,7 +47,7 @@ This application is a web server for managing and retrieving information about v
   | |- suppliersController.js
   | |- webhookController.js
   |- middleware/
-  | |- authenticationToken.js
+  | |- verifyToken.js
   | |- checkMoxieToken.js
   |- routes/
   | |- authRoutes.js
@@ -76,10 +76,10 @@ This application is a web server for managing and retrieving information about v
   - suppliersRoutes.js: Holds routes related to CRUD operations on suppliers.
   - webhookRoutes.js: holds routes related to CRUD operations on webhooks
 - controllers: Contains all the logic for handling routes.
-  - authController.js:
-  - productsController.js:
-  - suppliersController.js:
-  - webhookController.js
+  - authController.js: login, signup, logout
+  - productsController.js: CRUD operations on products
+  - suppliersController.js: CRUD operations on suppliers
+  - webhookController.js : CRUD operations on webhooks
 - services: Contains business logic and calls to the database.
   - productsServices.js: handles the logic for products database table actions
   - suppliersServices.js: handles the logic for products database table actions
