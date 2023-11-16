@@ -3,6 +3,7 @@ const { formatResponse } = require("../utils/index");
 
 // GET ALL PRODUCTS method
 const getAllProducts = async (req, res) => {
+  console.log("req", req);
   try {
     const products = await productsService.fetchAllProducts(req.supabase);
     console.log(products);

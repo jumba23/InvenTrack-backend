@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 require("dotenv").config();
+const verifyToken = require("./middleware/verifyToken");
 
 // Import supabase
 const { createClient } = require("@supabase/supabase-js");
@@ -42,9 +43,9 @@ const webhookRoutes = require("./routes/webhookRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
-app.use("/api/products", productsRoutes);
-app.use("/api/suppliers", suppliersRoutes);
-app.use("/api/webhook", webhookRoutes);
+app.use("/api/products", verifyToken, productsRoutes);
+app.use("/api/suppliers", verifyToken, suppliersRoutes);
+app.use("/api/webhook", verifyToken, webhookRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
