@@ -1,4 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
+const jwt = require("jsonwebtoken");
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -77,6 +78,18 @@ exports.login = async (req, res) => {
     return res.status(400).json({ error: "Email not verified" });
   }
 
+  // Generate a JWT
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+
+  // Set the JWT in an HTTP-only cookie
+  res.cookie("authToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // use secure cookies in production
+    sameSite: "strict",
+  });
+
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -90,14 +103,8 @@ exports.login = async (req, res) => {
   // Store user info in session
   req.session.user = { token: session.access_token };
   console.log("Token in Session:", req.session.user.token);
-  // Save the session before sending the response
-  req.session.save((err) => {
-    if (err) {
-      return res.status(500).json({ error: "Could not save session" });
-    }
 
-    res.status(200).json({ user, profile, token: session.access_token });
-  });
+  res.status(200).json({ user, profile });
 };
 
 // LOUGOUT method
