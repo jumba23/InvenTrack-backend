@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 // Import supabase
 const { createClient } = require("@supabase/supabase-js");
@@ -21,6 +22,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 //Middleware
 app.use(bodyParser.json());
