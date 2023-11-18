@@ -43,9 +43,9 @@ const webhookRoutes = require("./routes/webhookRoutes");
 
 // API Routes
 app.use("/api/user", authRoute);
-app.use("/api/products", verifyToken, productsRoutes);
-app.use("/api/suppliers", verifyToken, suppliersRoutes);
-app.use("/api/webhook", verifyToken, webhookRoutes);
+app.use("/api/products", productsRoutes);
+app.use("/api/suppliers", suppliersRoutes);
+app.use("/api/webhook", webhookRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
