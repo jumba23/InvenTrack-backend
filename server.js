@@ -4,7 +4,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 require("dotenv").config();
-const verifyToken = require("./middleware/verifyToken");
 
 // Import supabase
 const { createClient } = require("@supabase/supabase-js");
@@ -16,7 +15,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 //In the context of a full-stack application with different domains for the frontend and backend (like this one)
 // you need to enable CORS (Cross-Origin Resource Sharing) to allow the frontend to access the backend.
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000", // Frontend's origin
+  credentials: true, // To accept cookies via cross-origin requests
+};
+
+app.use(cors(corsOptions));
 
 //Middleware
 app.use(bodyParser.json());
