@@ -118,6 +118,8 @@ exports.logout = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.message });
     }
+    // JWT cleared from cookie
+    res.clearCookie("authToken");
     // Return a success message
     res.status(200).json({ message: "User logged out successfully" });
   }
