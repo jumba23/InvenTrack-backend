@@ -1,5 +1,8 @@
+const jwt = require("jsonwebtoken");
+
 module.exports = function validateJWT(req, res, next) {
   const token = req.cookies.authToken;
+
   if (!token) {
     return res.status(401).send("Access Denied");
   }
@@ -9,8 +12,9 @@ module.exports = function validateJWT(req, res, next) {
     req.user = verified;
     next();
   } catch (err) {
+    // console.error("JWT Verification Error:", err);
     res.status(400).send("Invalid Token");
   }
 
-  next();
+  // next();
 };

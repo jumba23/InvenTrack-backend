@@ -102,7 +102,7 @@ exports.login = async (req, res) => {
 
   // Store user info in session
   req.session.user = { token: session.access_token };
-  console.log("Token in Session:", req.session.user.token);
+  // console.log("Token in Session:", req.session.user.token);
 
   res.status(200).json({ user, profile });
 };
