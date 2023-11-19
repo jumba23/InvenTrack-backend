@@ -20,6 +20,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // Express app initialization
 const app = express();
 
+// Use morgan for logging in development mode
+if (process.env.NODE_ENV === "development") {
+  const morgan = require("morgan");
+  app.use(morgan("dev"));
+}
+
 // Attach middlewares to the Express application
 attachMiddleware(app, supabase);
 
