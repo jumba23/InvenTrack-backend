@@ -5,7 +5,7 @@ const { formatResponse } = require("../utils/index");
 const getAllSuppliers = async (req, res) => {
   try {
     const suppliers = await suppliersService.fetchAllSuppliers(req.supabase);
-    console.log(suppliers);
+    // console.log(suppliers);
     const formattedResponse = formatResponse(suppliers);
     res.json(formattedResponse);
   } catch (error) {
