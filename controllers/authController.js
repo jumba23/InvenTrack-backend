@@ -53,7 +53,7 @@ exports.signup = async (req, res) => {
     return res.status(400).json({ error: insertError.message });
   }
 
-  console.log("Profile data", profile);
+  // console.log("Profile data", profile);
 
   // Return both the user and their additional data
   res.status(201).json({ new_user: data });
