@@ -1,10 +1,8 @@
 const express = require("express");
-const session = require("express-session");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const app = express();
 require("dotenv").config();
-const cookieParser = require("cookie-parser");
+const { createClient } = require("@supabase/supabase-js");
+const attachMiddleware = require("./middleware");
+const errorHandler = require("./middleware/errorHandler");
 
 // ------------------------------------------------------
 // This file configures and initializes the Express server for the application.
@@ -14,45 +12,19 @@ const cookieParser = require("cookie-parser");
 // The server listens on a specified port, ready to handle incoming requests.
 // ------------------------------------------------------
 
-// Import and configure Supabase client
-const { createClient } = require("@supabase/supabase-js");
+// Supabase client configuration
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// CORS configuration to allow requests from the frontend domain
-const corsOptions = {
-  // origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
-  origin: "http://localhost:3000", // Specify the frontend's origin.
-  credentials: true, // Accept cookies via cross-origin requests.
-};
-app.use(cors(corsOptions));
+// Express app initialization
+const app = express();
 
-// Parse HTTP request cookies
-app.use(cookieParser());
+// Attach middlewares to the Express application
+attachMiddleware(app, supabase);
 
-// Middleware for parsing JSON bodies
-app.use(bodyParser.json());
-
-// Middleware to attach the Supabase client to requests
-app.use((req, res, next) => {
-  req.supabase = supabase;
-  next();
-});
-
-// Session configuration
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET, // Secret for signing the session ID cookie.
-    resave: false,
-    saveUninitialized: true,
-    // In a production environment, it's best practice to use "true" to
-    //ensure cookies are transmitted over secure protocols only.
-    cookie: { secure: process.env.NODE_ENV === "production" }, //currently set to false for development
-  })
-);
-
-// Import and use API routes
+// API Routes
+// -----------------------------
 const authRoute = require("./routes/authRoutes");
 const productsRoutes = require("./routes/productsRoutes");
 const suppliersRoutes = require("./routes/suppliersRoutes");
@@ -63,10 +35,9 @@ app.use("/api/products", productsRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  res.status(422).send({ error: err.message });
-});
+// Error Handling Middleware
+// -----------------------------
+app.use(errorHandler); // Centralized error handling
 
 // Start the server on a specified port
 const port = process.env.PORT || 5000;
