@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+// Middleware to validate JWT
 module.exports = function validateJWT(req, res, next) {
   const token = req.cookies.authToken;
 
