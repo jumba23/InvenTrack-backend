@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 // Middleware to validate JWT
 module.exports = function validateJWT(req, res, next) {
   const token = req.cookies.authToken;
-  console.log("server request cookies: ", req.cookies);
+  // console.log("server request cookies: ", req.cookies);
 
   if (!token) {
     console.log("No token found", token);
