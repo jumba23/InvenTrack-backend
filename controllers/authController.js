@@ -68,6 +68,8 @@ exports.login = async (req, res) => {
     password: password,
   });
 
+  console.log("data - login method", data);
+
   if (error) {
     return res.status(400).json({ error: error.message });
   }
