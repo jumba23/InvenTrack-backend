@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 function generateSecureToken(length = 48) {
   return new Promise((resolve, reject) => {
