@@ -1,4 +1,4 @@
-const formatResponse = (inventory) => {
+export const formatResponse = (inventory) => {
   return inventory.map((item) => ({
     product_id: item.product_id, // You may need to provide the appropriate ID
     name: item.name,
@@ -20,8 +20,4 @@ const thresholdLevels = (item) => {
   } else {
     return "In Stock";
   }
-};
-
-module.exports = {
-  formatResponse,
 };
