@@ -1,22 +1,28 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-//---------------------------------------------------------------------------------------------------------------
-// This middleware is used to validate JWTs sent with HTTP requests to secure endpoints on the server.
-// The middleware checks for a token in the request's cookies.
-// If a token is not present, it sends a 200 status response (Access Denied).
-// If a token is present, it attempts to verify the token using the secret key stored in process.env.JWT_SECRET.
-// If the token is valid, it attaches the verified user information to the request object and calls next() to pass
-// control to the next middleware or route handler.
-// If the token is invalid (verification fails), it sends a 400 status response (Invalid Token).
-// ---------------------------------------------------------------------------------------------
-
-// Middleware to validate JWT
-module.exports = function validateJWT(req, res, next) {
+/**
+ * JWT Validation Middleware
+ *
+ * This middleware is used to validate JWTs sent with HTTP requests to secure endpoints on the server.
+ *
+ * Operation:
+ * 1. Checks for a token in the request's cookies.
+ * 2. If no token is present, sends a 200 status response (Access Denied).
+ * 3. If a token is present, attempts to verify it using the secret key stored in process.env.JWT_SECRET.
+ * 4. If the token is valid, attaches the verified user information to the request object and calls next().
+ * 5. If the token is invalid (verification fails), sends a 400 status response (Invalid Token).
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @param {Function} next - The next middleware function
+ */
+const validateJWT = (req, res, next) => {
   const token = req.cookies.authToken;
+  // Uncomment the following line for debugging
   // console.log("server request cookies: ", req.cookies);
 
   if (!token) {
-    console.log("No token found", token);
+    console.log("No token found");
     return res.status(200).send("Access Denied");
   }
 
@@ -28,3 +34,5 @@ module.exports = function validateJWT(req, res, next) {
     res.status(400).send("Invalid Token");
   }
 };
+
+export default validateJWT;
