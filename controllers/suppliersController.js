@@ -1,47 +1,69 @@
-const suppliersService = require("../services/suppliersService");
-const { formatResponse } = require("../utils/index");
+// suppliersController.js
 
-// GET ALL SUPPLIERS method
-const getAllSuppliers = async (req, res) => {
+import * as suppliersService from "../services/suppliersService.js";
+import { formatResponse } from "../utils/index.js";
+
+/**
+ * Controller for handling supplier-related operations.
+ * Each method corresponds to a specific API endpoint and handles the request and response.
+ */
+
+/**
+ * Get all suppliers
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getAllSuppliers = async (req, res) => {
   try {
     const suppliers = await suppliersService.fetchAllSuppliers(req.supabase);
-    // console.log(suppliers);
     const formattedResponse = formatResponse(suppliers);
     res.json(formattedResponse);
   } catch (error) {
-    console.error(error);
+    console.error("Error in getAllSuppliers:", error);
     res.status(500).send("An error occurred while fetching suppliers");
   }
 };
 
-// ADD SUPPLIER method
-const addSupplier = async (req, res) => {
+/**
+ * Add a new supplier
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const addSupplier = async (req, res) => {
   try {
     const newSupplier = req.body;
     console.log("New Supplier:", newSupplier);
     await suppliersService.addNewSupplier(req.supabase, newSupplier);
-    res.send("Supplier added");
+    res.status(201).send("Supplier added successfully");
   } catch (error) {
-    console.error(error);
+    console.error("Error in addSupplier:", error);
     res.status(500).send("An error occurred while adding the supplier");
   }
 };
 
-// GET SUPPLIER BY ID method
-const getSupplierById = async (req, res) => {
+/**
+ * Get a supplier by its ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getSupplierById = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await suppliersService.fetchSupplierById(req.supabase, id);
     const formattedResponse = formatResponse(supplier);
     res.json(formattedResponse);
   } catch (error) {
-    console.error(error);
+    console.error("Error in getSupplierById:", error);
     res.status(500).send("An error occurred while fetching the supplier");
   }
 };
 
-// UPDATE SUPPLIER method
-const updateSupplier = async (req, res) => {
+/**
+ * Update a supplier by its ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedSupplier = req.body;
@@ -50,29 +72,25 @@ const updateSupplier = async (req, res) => {
       id,
       updatedSupplier
     );
-    res.send("Supplier updated");
+    res.send("Supplier updated successfully");
   } catch (error) {
-    console.error(error);
+    console.error("Error in updateSupplier:", error);
     res.status(500).send("An error occurred while updating the supplier");
   }
 };
 
-// DELETE SUPPLIER method
-const deleteSupplier = async (req, res) => {
+/**
+ * Delete a supplier by its ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     await suppliersService.deleteSupplierById(req.supabase, id);
-    res.send("Supplier deleted");
+    res.send("Supplier deleted successfully");
   } catch (error) {
-    console.error(error);
+    console.error("Error in deleteSupplier:", error);
     res.status(500).send("An error occurred while deleting the supplier");
   }
-};
-
-module.exports = {
-  getAllSuppliers,
-  addSupplier,
-  getSupplierById,
-  updateSupplier,
-  deleteSupplier,
 };
