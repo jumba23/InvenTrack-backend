@@ -1,4 +1,4 @@
-const fetchAllSuppliers = async (supabase) => {
+export const fetchAllSuppliers = async (supabase) => {
   try {
     const { data, error } = await supabase.from("suppliers").select("*");
     if (error) throw error;
@@ -8,7 +8,7 @@ const fetchAllSuppliers = async (supabase) => {
   }
 };
 
-const addNewSupplier = async (supabase, supplier) => {
+export const addNewSupplier = async (supabase, supplier) => {
   try {
     const { data, error } = await supabase
       .from("suppliers")
@@ -21,7 +21,7 @@ const addNewSupplier = async (supabase, supplier) => {
   }
 };
 
-const fetchSupplierById = async (supabase, id) => {
+export const fetchSupplierById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
       .from("suppliers")
@@ -35,7 +35,7 @@ const fetchSupplierById = async (supabase, id) => {
   }
 };
 
-const updateSupplierById = async (supabase, id, supplier) => {
+export const updateSupplierById = async (supabase, id, supplier) => {
   try {
     const { data, error } = await supabase
       .from("suppliers")
@@ -49,7 +49,7 @@ const updateSupplierById = async (supabase, id, supplier) => {
   }
 };
 
-const deleteSupplierById = async (supabase, id) => {
+export const deleteSupplierById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
       .from("suppliers")
@@ -60,12 +60,4 @@ const deleteSupplierById = async (supabase, id) => {
   } catch (error) {
     throw error;
   }
-};
-
-export default {
-  fetchAllSuppliers,
-  addNewSupplier,
-  fetchSupplierById,
-  updateSupplierById,
-  deleteSupplierById,
 };

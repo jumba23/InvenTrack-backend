@@ -1,6 +1,12 @@
 // suppliersController.js
 
-import * as suppliersService from "../services/suppliersService.js";
+import {
+  fetchAllSuppliers,
+  addNewSupplier,
+  fetchSupplierById,
+  updateSupplierById,
+  deleteSupplierById,
+} from "../services/suppliersService.js";
 import { formatResponse } from "../utils/index.js";
 
 /**
@@ -15,7 +21,7 @@ import { formatResponse } from "../utils/index.js";
  */
 export const getAllSuppliers = async (req, res) => {
   try {
-    const suppliers = await suppliersService.fetchAllSuppliers(req.supabase);
+    const suppliers = await fetchAllSuppliers(req.supabase);
     const formattedResponse = formatResponse(suppliers);
     res.json(formattedResponse);
   } catch (error) {
@@ -33,7 +39,7 @@ export const addSupplier = async (req, res) => {
   try {
     const newSupplier = req.body;
     console.log("New Supplier:", newSupplier);
-    await suppliersService.addNewSupplier(req.supabase, newSupplier);
+    await addNewSupplier(req.supabase, newSupplier);
     res.status(201).send("Supplier added successfully");
   } catch (error) {
     console.error("Error in addSupplier:", error);
@@ -49,7 +55,7 @@ export const addSupplier = async (req, res) => {
 export const getSupplierById = async (req, res) => {
   try {
     const { id } = req.params;
-    const supplier = await suppliersService.fetchSupplierById(req.supabase, id);
+    const supplier = await fetchSupplierById(req.supabase, id);
     const formattedResponse = formatResponse(supplier);
     res.json(formattedResponse);
   } catch (error) {
@@ -67,11 +73,7 @@ export const updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedSupplier = req.body;
-    await suppliersService.updateSupplierById(
-      req.supabase,
-      id,
-      updatedSupplier
-    );
+    await updateSupplierById(req.supabase, id, updatedSupplier);
     res.send("Supplier updated successfully");
   } catch (error) {
     console.error("Error in updateSupplier:", error);
@@ -87,7 +89,7 @@ export const updateSupplier = async (req, res) => {
 export const deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
-    await suppliersService.deleteSupplierById(req.supabase, id);
+    await deleteSupplierById(req.supabase, id);
     res.send("Supplier deleted successfully");
   } catch (error) {
     console.error("Error in deleteSupplier:", error);
