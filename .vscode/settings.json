@@ -1,5 +1,6 @@
 {
   "workbench.preferredDarkColorTheme": "GitHub Dark",
   "workbench.colorTheme": "GitHub Dark High Contrast",
-  "cSpell.words": ["LOUGOUT", "supabase"]
+  "cSpell.words": ["LOUGOUT", "supabase"],
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

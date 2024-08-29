@@ -1,4 +1,4 @@
-const fetchAllProducts = async (supabase) => {
+export const fetchAllProducts = async (supabase) => {
   try {
     const { data, error } = await supabase.from("products").select("*");
     if (error) throw error;
@@ -8,7 +8,7 @@ const fetchAllProducts = async (supabase) => {
   }
 };
 
-const addNewProduct = async (supabase, product) => {
+export const addNewProduct = async (supabase, product) => {
   try {
     const { data, error } = await supabase
       .from("products")
@@ -21,7 +21,7 @@ const addNewProduct = async (supabase, product) => {
   }
 };
 
-const fetchProductById = async (supabase, id) => {
+export const fetchProductById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
       .from("products")
@@ -35,7 +35,7 @@ const fetchProductById = async (supabase, id) => {
   }
 };
 
-const updateProductById = async (supabase, id, product) => {
+export const updateProductById = async (supabase, id, product) => {
   try {
     const { data, error } = await supabase
       .from("products")
@@ -49,7 +49,7 @@ const updateProductById = async (supabase, id, product) => {
   }
 };
 
-const deleteProductById = async (supabase, id) => {
+export const deleteProductById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
       .from("products")
@@ -60,12 +60,4 @@ const deleteProductById = async (supabase, id) => {
   } catch (error) {
     throw error;
   }
-};
-
-export default {
-  fetchAllProducts,
-  addNewProduct,
-  fetchProductById,
-  updateProductById,
-  deleteProductById,
 };
