@@ -1,8 +1,7 @@
-const express = require("express");
-require("dotenv").config();
-const { createClient } = require("@supabase/supabase-js");
-const attachMiddleware = require("./middleware");
-const errorHandler = require("./middleware/errorHandler");
+import express from "express";
+import { createClient } from "@supabase/supabase-js";
+import attachMiddleware from "./middleware/index.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 // ------------------------------------------------------
 // This file configures and initializes the Express server for the application.
@@ -10,6 +9,8 @@ const errorHandler = require("./middleware/errorHandler");
 // and sets up routing for different API endpoints. It also establishes a connection
 // to Supabase for database interactions and initializes error handling.
 // The server listens on a specified port, ready to handle incoming requests.
+//
+// Note: This file uses ES6 module syntax. Make sure your package.json has "type": "module".
 // ------------------------------------------------------
 
 // Supabase client configuration
@@ -22,8 +23,9 @@ const app = express();
 
 // Use morgan for logging in development mode
 if (process.env.NODE_ENV === "development") {
-  const morgan = require("morgan");
-  app.use(morgan("dev"));
+  // Using dynamic import for morgan as it's only needed in development
+  const morgan = await import("morgan");
+  app.use(morgan.default("dev"));
 }
 
 // Attach middlewares to the Express application
@@ -31,10 +33,10 @@ attachMiddleware(app, supabase);
 
 // API Routes
 // -----------------------------
-const authRoute = require("./routes/authRoutes");
-const productsRoutes = require("./routes/productsRoutes");
-const suppliersRoutes = require("./routes/suppliersRoutes");
-const webhookRoutes = require("./routes/webhookRoutes");
+import authRoute from "./routes/authRoutes.js";
+import productsRoutes from "./routes/productsRoutes.js";
+import suppliersRoutes from "./routes/suppliersRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 app.use("/api/user", authRoute);
 app.use("/api/products", productsRoutes);
