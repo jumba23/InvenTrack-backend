@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 // middleware.js
 
 exports.checkMoxieWebhookToken = (req, res, next) => {
