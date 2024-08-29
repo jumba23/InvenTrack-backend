@@ -33,8 +33,9 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
   format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
+    winston.format.json(),
+    winston.format.colorize({ all: true })
+    // winston.format.timestamp(),
   ),
   transports: [
     new winston.transports.File({ filename: "error.log", level: "error" }),
@@ -66,7 +67,7 @@ app.use(
     meta: true,
     msg: "HTTP {{req.method}} {{req.url}}",
     expressFormat: true,
-    colorize: false,
+    colorize: true,
   })
 );
 
