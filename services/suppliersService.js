@@ -62,7 +62,7 @@ const deleteSupplierById = async (supabase, id) => {
   }
 };
 
-export default {
+module.exports = {
   fetchAllSuppliers,
   addNewSupplier,
   fetchSupplierById,
