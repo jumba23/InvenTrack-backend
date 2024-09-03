@@ -15,6 +15,7 @@ import expressWinston from "express-winston";
 import attachMiddleware from "./middleware/index.js";
 import errorHandler from "./middleware/errorHandler.js";
 import supabase from "./config/supabaseClient.js";
+import "express-async-errors"; // This package allows Express to handle async errors automatically
 
 // Import route modules
 import authRoute from "./routes/authRoutes.js";
@@ -30,18 +31,27 @@ import webhookRoutes from "./routes/webhookRoutes.js";
  * - Log format includes timestamp and is in JSON format for easy parsing
  * - Console logging is added in non-production environments
  */
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
   format: winston.format.combine(
+    winston.format.timestamp(),
     winston.format.json(),
     winston.format.colorize({ all: true })
-    // winston.format.timestamp(),
   ),
   transports: [
     new winston.transports.File({ filename: "error.log", level: "error" }),
     new winston.transports.File({ filename: "combined.log" }),
   ],
 });
+
+// Add console logging in non-production environments
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
+}
 
 // Add console logging in non-production environments
 if (process.env.NODE_ENV !== "production") {
@@ -80,6 +90,13 @@ app.use("/api/products", productsRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
 
+// Catch 404 errors and forward them to the error handler
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+  next(error);
+});
+
 // Centralized error handling middleware
 app.use(errorHandler);
 
@@ -99,6 +116,3 @@ app.use(
 // Start the server
 const port = process.env.PORT || 5000;
 app.listen(port, () => logger.info(`Server started on port ${port}`));
-
-// Export logger for use in other files
-export { logger };
