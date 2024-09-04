@@ -14,6 +14,7 @@ import supabase from "../config/supabaseClient.js";
  * Registers a new user with Supabase and creates a profile in the 'profiles' table.
  */
 export const signup = async (req, res) => {
+  // req.body is already validated by the middleware
   const { email, password, firstName, lastName, cellNumber } = req.body;
 
   try {
@@ -48,17 +49,20 @@ export const signup = async (req, res) => {
     // Insert user profile into 'profiles' table
     const { error: insertError } = await supabase.from("profiles").insert({
       user_id: userData.id,
-      first_name: firstName,
-      last_name: lastName,
-      cell_number: cellNumber,
       full_name: `${firstName} ${lastName}`,
+      cell_number: cellNumber,
       email,
     });
 
     if (insertError) throw insertError;
 
-    res.status(201).json({ new_user: data });
+    res.status(201).json({
+      message:
+        "User registered successfully. Please check your email to confirm your account.",
+      user: userData,
+    });
   } catch (error) {
+    console.error("Signup error:", error);
     res.status(400).json({ error: error.message });
   }
 };
