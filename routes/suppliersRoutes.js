@@ -3,6 +3,8 @@
 import express from "express";
 import * as suppliersController from "../controllers/suppliersController.js";
 import validateJWT from "../middleware/validateJWT.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+import supplierSchema from "../models/supplierModel.js";
 
 /**
  * Express router to mount supplier related functions on.
@@ -31,10 +33,14 @@ router.get("/", validateJWT, suppliersController.getAllSuppliers);
  * @memberof module:routers/suppliersRoutes
  * @inner
  * @param {string} path - Express path
- * @param {callback} middleware - Express middleware (JWT validation)
+ * @param {callback[]} middleware - Express middlewares (JWT validation, request body validation)
  * @param {callback} controller - Express controller function
  */
-router.post("/", validateJWT, suppliersController.addSupplier);
+router.post(
+  "/",
+  [validateJWT, validateRequest(supplierSchema)],
+  suppliersController.addSupplier
+);
 
 /**
  * Route serving single supplier by ID.
@@ -55,10 +61,14 @@ router.get("/:id", validateJWT, suppliersController.getSupplierById);
  * @memberof module:routers/suppliersRoutes
  * @inner
  * @param {string} path - Express path
- * @param {callback} middleware - Express middleware (JWT validation)
+ * @param {callback[]} middleware - Express middlewares (JWT validation, request body validation)
  * @param {callback} controller - Express controller function
  */
-router.put("/:id", validateJWT, suppliersController.updateSupplier);
+router.put(
+  "/:id",
+  [validateJWT, validateRequest(supplierSchema)],
+  suppliersController.updateSupplier
+);
 
 /**
  * Route serving supplier deletion.
