@@ -1,6 +1,8 @@
 import express from "express";
 import * as authController from "../controllers/authController.js";
 import validateJWT from "../middleware/validateJWT.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+import userSchema from "../models/userModel.js";
 
 /**
  * Express router for authentication routes
@@ -22,7 +24,7 @@ router.get("/validate-token", validateJWT, (req, res) => {
  * POST /signup
  * Registers a new user
  */
-router.post("/signup", authController.signup);
+router.post("/signup", validateRequest(userSchema), authController.signup);
 
 /**
  * User login route
