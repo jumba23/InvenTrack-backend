@@ -30,14 +30,22 @@ export const signup = async (req, res) => {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      if (error.message.includes("Email rate limit exceeded")) {
+        return res.status(429).json({
+          error:
+            "Too many signup attempts. Please try again later or use a different email address.",
+        });
+      }
+      throw error;
+    }
 
     const userData = data?.user;
     if (!userData || !userData.id) {
       throw new Error("User data is incomplete.");
     }
 
-    // Create user profile
+    // Insert user profile into 'profiles' table
     const { error: insertError } = await supabase.from("profiles").insert({
       user_id: userData.id,
       first_name: firstName,
