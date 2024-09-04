@@ -7,7 +7,7 @@ import {
   updateProductById,
   deleteProductById,
 } from "../services/productsService.js";
-import { formatResponse } from "../utils/index.js";
+// import { formatResponse } from "../utils/index.js";
 
 /**
  * Controller for handling product-related operations.
@@ -22,8 +22,10 @@ import { formatResponse } from "../utils/index.js";
 export const getAllProducts = async (req, res) => {
   try {
     const products = await fetchAllProducts(req.supabase);
-    const formattedResponse = formatResponse(products);
-    res.json(formattedResponse);
+    // const formattedResponse = formatResponse(products);
+    // res.json(formattedResponse);
+    console.log("Products:", products);
+    res.json(products);
   } catch (error) {
     console.error("Error in getAllProducts:", error);
     res.status(500).send("An error occurred while fetching products");
@@ -56,8 +58,9 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await fetchProductById(req.supabase, id);
-    const formattedResponse = formatResponse(product);
-    res.json(formattedResponse);
+    // const formattedResponse = formatResponse(product);
+    // res.json(formattedResponse);
+    res.json(product);
   } catch (error) {
     console.error("Error in getProductById:", error);
     res.status(500).send("An error occurred while fetching the product");

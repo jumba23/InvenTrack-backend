@@ -1,5 +1,5 @@
 // Centralized error handling
-import { logger } from "../utils/logger.js";
+import { logger } from "../server.js";
 
 export default function errorHandler(err, req, res, next) {
   // Log the error

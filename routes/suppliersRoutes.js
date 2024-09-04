@@ -22,7 +22,7 @@ const router = express.Router();
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/", validateJWT, suppliersController.fetchAllSuppliers);
+router.get("/", validateJWT, suppliersController.getAllSuppliers);
 
 /**
  * Route serving supplier creation.
@@ -46,7 +46,7 @@ router.post("/", validateJWT, suppliersController.addNewSupplier);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/:id", validateJWT, suppliersController.fetchSupplierById);
+router.get("/:id", validateJWT, suppliersController.getSupplierById);
 
 /**
  * Route serving supplier update.

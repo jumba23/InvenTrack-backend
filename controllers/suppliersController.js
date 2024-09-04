@@ -9,7 +9,7 @@
  * @returns {Promise<Array>} A promise that resolves to an array of supplier objects.
  * @throws {Error} If there's an error fetching the suppliers.
  */
-export const fetchAllSuppliers = async (supabase) => {
+export const getAllSuppliers = async (supabase) => {
   try {
     const { data, error } = await supabase.from("suppliers").select("*");
     if (error) throw error;
@@ -48,7 +48,7 @@ export const addNewSupplier = async (supabase, supplier) => {
  * @returns {Promise<object>} A promise that resolves to the supplier object.
  * @throws {Error} If there's an error fetching the supplier or if it's not found.
  */
-export const fetchSupplierById = async (supabase, id) => {
+export const getSupplierById = async (supabase, id) => {
   try {
     const { data, error } = await supabase
       .from("suppliers")
