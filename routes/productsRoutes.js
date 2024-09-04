@@ -3,6 +3,8 @@
 import express from "express";
 import * as productsController from "../controllers/productsController.js";
 import validateJWT from "../middleware/validateJWT.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+import productSchema from "../models/productModel.js";
 
 /**
  * Express router to mount product related functions on.
@@ -31,7 +33,7 @@ router.get("/", validateJWT, productsController.getAllProducts);
  * @memberof module:routers/productsRoutes
  * @inner
  * @param {string} path - Express path
- * @param {callback} middleware - Express middleware (JWT validation)
+ * @param {callback[]} middleware - Express middlewares (JWT validation, request body validation)
  * @param {callback} controller - Express controller function
  */
 router.post("/", validateJWT, productsController.addProduct);
@@ -46,7 +48,11 @@ router.post("/", validateJWT, productsController.addProduct);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/:id", validateJWT, productsController.getProductById);
+router.get(
+  "/:id",
+  [validateJWT, validateRequest(productSchema)],
+  productsController.getProductById
+);
 
 /**
  * Route serving product update.
@@ -55,10 +61,14 @@ router.get("/:id", validateJWT, productsController.getProductById);
  * @memberof module:routers/productsRoutes
  * @inner
  * @param {string} path - Express path
- * @param {callback} middleware - Express middleware (JWT validation)
+ * @param {callback[]} middleware - Express middlewares (JWT validation, request body validation)
  * @param {callback} controller - Express controller function
  */
-router.put("/:id", validateJWT, productsController.updateProduct);
+router.put(
+  "/:id",
+  [validateJWT, validateRequest(productSchema)],
+  productsController.updateProduct
+);
 
 /**
  * Route serving product deletion.
