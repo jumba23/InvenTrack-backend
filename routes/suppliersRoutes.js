@@ -22,7 +22,7 @@ const router = express.Router();
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/", validateJWT, suppliersController.getAllSuppliers);
+router.get("/", validateJWT, suppliersController.fetchAllSuppliers);
 
 /**
  * Route serving supplier creation.
@@ -34,7 +34,7 @@ router.get("/", validateJWT, suppliersController.getAllSuppliers);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.post("/", validateJWT, suppliersController.addSupplier);
+router.post("/", validateJWT, suppliersController.addNewSupplier);
 
 /**
  * Route serving single supplier by ID.
@@ -46,7 +46,7 @@ router.post("/", validateJWT, suppliersController.addSupplier);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/:id", validateJWT, suppliersController.getSupplierById);
+router.get("/:id", validateJWT, suppliersController.fetchSupplierById);
 
 /**
  * Route serving supplier update.
@@ -58,7 +58,7 @@ router.get("/:id", validateJWT, suppliersController.getSupplierById);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.put("/:id", validateJWT, suppliersController.updateSupplier);
+router.put("/:id", validateJWT, suppliersController.updateSupplierById);
 
 /**
  * Route serving supplier deletion.
@@ -70,6 +70,6 @@ router.put("/:id", validateJWT, suppliersController.updateSupplier);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.delete("/:id", validateJWT, suppliersController.deleteSupplier);
+router.delete("/:id", validateJWT, suppliersController.deleteSupplierById);
 
 export default router;
