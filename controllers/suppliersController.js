@@ -1,98 +1,114 @@
-// suppliersController.js
-
-import {
-  fetchAllSuppliers,
-  addNewSupplier,
-  fetchSupplierById,
-  updateSupplierById,
-  deleteSupplierById,
-} from "../services/suppliersService.js";
-import { formatResponse } from "../utils/index.js";
-
 /**
- * Controller for handling supplier-related operations.
- * Each method corresponds to a specific API endpoint and handles the request and response.
+ * suppliersService.js
+ * This module contains functions for interacting with the suppliers table in the Supabase database.
  */
 
 /**
- * Get all suppliers
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Fetches all suppliers from the database.
+ * @param {object} supabase - The Supabase client instance.
+ * @returns {Promise<Array>} A promise that resolves to an array of supplier objects.
+ * @throws {Error} If there's an error fetching the suppliers.
  */
-export const getAllSuppliers = async (req, res) => {
+export const fetchAllSuppliers = async (supabase) => {
   try {
-    const suppliers = await fetchAllSuppliers(req.supabase);
-    const formattedResponse = formatResponse(suppliers);
-    res.json(formattedResponse);
+    const { data, error } = await supabase.from("suppliers").select("*");
+    if (error) throw error;
+    return data;
   } catch (error) {
-    console.error("Error in getAllSuppliers:", error);
-    res.status(500).send("An error occurred while fetching suppliers");
+    console.error("Error fetching all suppliers:", error.message);
+    throw error;
   }
 };
 
 /**
- * Add a new supplier
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Adds a new supplier to the database.
+ * @param {object} supabase - The Supabase client instance.
+ * @param {object} supplier - The supplier object to be added.
+ * @returns {Promise<object>} A promise that resolves to the newly created supplier object.
+ * @throws {Error} If there's an error adding the supplier.
  */
-export const addSupplier = async (req, res) => {
+export const addNewSupplier = async (supabase, supplier) => {
   try {
-    const newSupplier = req.body;
-    console.log("New Supplier:", newSupplier);
-    await addNewSupplier(req.supabase, newSupplier);
-    res.status(201).send("Supplier added successfully");
+    const { data, error } = await supabase
+      .from("suppliers")
+      .insert(supplier)
+      .select();
+    if (error) throw error;
+    return data[0]; // Return the first (and only) inserted supplier
   } catch (error) {
-    console.error("Error in addSupplier:", error);
-    res.status(500).send("An error occurred while adding the supplier");
+    console.error("Error adding new supplier:", error.message);
+    throw error;
   }
 };
 
 /**
- * Get a supplier by its ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Fetches a single supplier by its ID.
+ * @param {object} supabase - The Supabase client instance.
+ * @param {number|string} id - The ID of the supplier to fetch.
+ * @returns {Promise<object>} A promise that resolves to the supplier object.
+ * @throws {Error} If there's an error fetching the supplier or if it's not found.
  */
-export const getSupplierById = async (req, res) => {
+export const fetchSupplierById = async (supabase, id) => {
   try {
-    const { id } = req.params;
-    const supplier = await fetchSupplierById(req.supabase, id);
-    const formattedResponse = formatResponse(supplier);
-    res.json(formattedResponse);
+    const { data, error } = await supabase
+      .from("suppliers")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Supplier not found");
+    return data;
   } catch (error) {
-    console.error("Error in getSupplierById:", error);
-    res.status(500).send("An error occurred while fetching the supplier");
+    console.error(`Error fetching supplier with id ${id}:`, error.message);
+    throw error;
   }
 };
 
 /**
- * Update a supplier by its ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Updates a supplier by its ID.
+ * @param {object} supabase - The Supabase client instance.
+ * @param {number|string} id - The ID of the supplier to update.
+ * @param {object} supplier - The updated supplier data.
+ * @returns {Promise<object>} A promise that resolves to the updated supplier object.
+ * @throws {Error} If there's an error updating the supplier or if it's not found.
  */
-export const updateSupplier = async (req, res) => {
+export const updateSupplierById = async (supabase, id, supplier) => {
   try {
-    const { id } = req.params;
-    const updatedSupplier = req.body;
-    await updateSupplierById(req.supabase, id, updatedSupplier);
-    res.send("Supplier updated successfully");
+    const { data, error } = await supabase
+      .from("suppliers")
+      .update(supplier)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Supplier not found");
+    return data;
   } catch (error) {
-    console.error("Error in updateSupplier:", error);
-    res.status(500).send("An error occurred while updating the supplier");
+    console.error(`Error updating supplier with id ${id}:`, error.message);
+    throw error;
   }
 };
 
 /**
- * Delete a supplier by its ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Deletes a supplier by its ID.
+ * @param {object} supabase - The Supabase client instance.
+ * @param {number|string} id - The ID of the supplier to delete.
+ * @returns {Promise<object>} A promise that resolves to the deleted supplier object.
+ * @throws {Error} If there's an error deleting the supplier or if it's not found.
  */
-export const deleteSupplier = async (req, res) => {
+export const deleteSupplierById = async (supabase, id) => {
   try {
-    const { id } = req.params;
-    await deleteSupplierById(req.supabase, id);
-    res.send("Supplier deleted successfully");
+    const { data, error } = await supabase
+      .from("suppliers")
+      .delete()
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Supplier not found");
+    return data;
   } catch (error) {
-    console.error("Error in deleteSupplier:", error);
-    res.status(500).send("An error occurred while deleting the supplier");
+    console.error(`Error deleting supplier with id ${id}:`, error.message);
+    throw error;
   }
 };
