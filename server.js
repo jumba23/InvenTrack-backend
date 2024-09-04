@@ -53,15 +53,6 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-// Add console logging in non-production environments
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    })
-  );
-}
-
 // Initialize Express application
 const app = express();
 
