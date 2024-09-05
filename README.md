@@ -71,6 +71,12 @@ root
 │   ├── errorHandler.js
 │   ├── validateJWT.js
 │   └── checkMoxieToken.js
+├── models/
+│   ├── userModel.js
+│   ├── productModel.js
+│   ├── supplierModel.js
+│   ├── categoryModel.js
+│   └── profileModel.js
 ├── routes/
 │   ├── authRoutes.js
 │   ├── productsRoutes.js
