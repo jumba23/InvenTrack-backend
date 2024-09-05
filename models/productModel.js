@@ -1,25 +1,95 @@
 // models/productModel.js
 import Joi from "joi";
 
+/**
+ * Joi schema for product creation and full updates.
+ * This schema defines the structure and validation rules for product data.
+ * Fields specified as required are: name, retail_price_per_unit, selling_price_per_unit, quantity, and reorder_point.
+ */
 const productSchema = Joi.object({
-  name: Joi.string().required(),
-  short_description: Joi.string().allow(null, ""),
-  long_description: Joi.string().allow(null, ""),
-  sku: Joi.string().required(),
-  retail_price_p: Joi.number().min(0).required(),
-  selling_price_: Joi.number().min(0).required(),
-  quantity: Joi.number().integer().min(0).default(0),
-  reorder_point: Joi.number().integer().min(0).default(5),
-  supplier_id: Joi.number().integer().positive().allow(null),
-  category_id: Joi.number().integer().positive().required(),
-  note: Joi.string().allow(null, ""),
-  image_url: Joi.string().uri().allow(null, ""),
-  measurement_: Joi.string().allow(null, ""),
-  storage_location: Joi.string().allow(null, ""),
+  name: Joi.string().required().max(255).trim().description("Product name"),
+  retail_price_per_unit: Joi.number()
+    .min(0)
+    .required()
+    .description("Retail price per unit"),
+  selling_price_per_unit: Joi.number()
+    .min(0)
+    .required()
+    .description("Selling price per unit"),
+  quantity: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .description("Current quantity in stock"),
+  reorder_point: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .description("Quantity at which to reorder"),
+  // Additional fields that are optional
+  short_description: Joi.string()
+    .allow(null, "")
+    .max(500)
+    .description("Short description of the product"),
+  long_description: Joi.string()
+    .allow(null, "")
+    .max(2000)
+    .description("Detailed description of the product"),
+  sku: Joi.string().allow(null, "").max(50).description("Stock Keeping Unit"),
+  supplier_id: Joi.number()
+    .integer()
+    .positive()
+    .allow(null)
+    .description("ID of the supplier"),
+  category_id: Joi.number()
+    .integer()
+    .positive()
+    .allow(null)
+    .description("ID of the product category"),
+  note: Joi.string()
+    .allow(null, "")
+    .max(1000)
+    .description("Additional notes about the product"),
+  image_url: Joi.string()
+    .uri()
+    .allow(null, "")
+    .max(500)
+    .description("URL of the product image"),
+  measurement: Joi.string()
+    .allow(null, "")
+    .max(50)
+    .description("Unit of measurement"),
+  storage_location: Joi.string()
+    .allow(null, "")
+    .max(255)
+    .description("Storage location of the product"),
 });
 
+/**
+ * Joi schema for partial updates of product data.
+ * This schema makes all fields optional to allow for partial updates.
+ */
+const productUpdateSchema = productSchema.fork(
+  Object.keys(productSchema.describe().keys),
+  (schema) => schema.optional()
+);
+
+/**
+ * Validates a product object against the full product schema.
+ * @param {Object} product - The product object to validate.
+ * @returns {Object} The validation result.
+ */
 export const validateProduct = (product) => {
   return productSchema.validate(product, { abortEarly: false });
 };
 
-export default productSchema;
+/**
+ * Validates a partial product object for updates.
+ * @param {Object} productUpdate - The partial product object to validate.
+ * @returns {Object} The validation result.
+ */
+export const validateProductUpdate = (productUpdate) => {
+  return productUpdateSchema.validate(productUpdate, { abortEarly: false });
+};
+
+export { productSchema, productUpdateSchema };
