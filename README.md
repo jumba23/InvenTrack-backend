@@ -56,47 +56,195 @@ Create a `.env` file in the root directory with the following variables:
 
 ```plaintext
 root
-├── server.js
-├── utils/
+├── server.js                       # Entry point of the application
+├── utils/                          # Utility functions and helpers
 │   ├── index.js
 │   ├── generateSecureToken.js
 │   └── logger.js
-├── controllers/
+├── controllers/                    # Request handlers
 │   ├── authController.js
 │   ├── productsController.js
 │   ├── suppliersController.js
 │   └── webhookController.js
-├── middleware/
+├── middleware/                     # Custom middleware functions
 │   ├── index.js
 │   ├── errorHandler.js
 │   ├── validateJWT.js
 │   └── checkMoxieToken.js
+<<<<<<< HEAD
 ├── models/
 │   ├── userModel.js
 │   ├── productModel.js
 │   ├── supplierModel.js
 │   ├── categoryModel.js
 │   └── profileModel.js
+=======
+<<<<<<< Updated upstream
+>>>>>>> 9e32155415466827315d0c7435c6dfa3a38904b9
 ├── routes/
+=======
+├── models/                         # Data models and validation schemas
+│   ├── userModel.js
+│   ├── productModel.js
+│   ├── supplierModel.js
+│   ├── categoryModel.js
+│   └── profileModel.js
+├── routes/                         # API route definitions
+>>>>>>> Stashed changes
 │   ├── authRoutes.js
 │   ├── productsRoutes.js
 │   ├── suppliersRoutes.js
 │   └── webhookRoutes.js
-├── services/
+├── services/                       # Business logic and data access
 │   ├── productServices.js
 │   └── suppliersServices.js
-├── config/
+├── config/                         # Configuration files
 │   └── supabaseClient.js
-├── package.json
-└── .env
+├── package.json                    # Project dependencies and scripts
+└── .env                            # Environment variables (not in repo)
 ```
 
-### Main Files Explained
+### Detailed Folder Descriptions
 
-- **`server.js`**: Entry point to the Node.js server. Defines middleware, routes, and starts the server.
-- **`middleware/index.js`**: Centralized middleware setup including CORS, body parsing, and session management.
-- **`middleware/errorHandler.js`**: Centralized error handling middleware.
-- **`config/supabaseClient.js`**: Supabase client configuration.
+1. **`server.js`**
+
+   - The main entry point of the application.
+   - Sets up the Express server, applies middleware, and connects routes.
+   - Initializes the database connection (Supabase in this case).
+
+2. **`utils/`**
+
+   - Contains utility functions that are used across the application.
+   - Examples: `generateSecureToken.js` for creating secure tokens, `logger.js` for consistent logging.
+   - These are general-purpose helpers that don't fit into other categories.
+
+3. **`controllers/`**
+
+   - Houses the logic for handling requests and sending responses.
+   - Each file typically corresponds to a specific resource (e.g., `productsController.js`, `suppliersController.js`).
+   - Controllers use services to perform business logic and data operations.
+
+4. **`middleware/`**
+
+   - Custom middleware functions that can be applied to routes.
+   - Examples: `validateJWT.js` for authentication, `validateRequest.js` for input validation.
+   - `errorHandler.js` provides centralized error handling for the application.
+
+5. **`models/`**
+
+   - Defines data structures and validation schemas for the application.
+   - Uses Joi for defining schemas (e.g., `productModel.js`, `supplierModel.js`).
+   - Each model file exports schemas for both creation and update operations.
+
+6. **`routes/`**
+
+   - Defines the API endpoints and maps them to controller functions.
+   - Organizes routes by resource (e.g., `productsRoutes.js`, `suppliersRoutes.js`).
+   - Applies relevant middleware (like authentication and validation) to routes.
+
+7. **`services/`**
+
+   - Contains the core business logic of the application.
+   - Handles data processing, interactions with the database (Supabase), and any complex operations.
+   - Keeps controllers lean by abstracting data manipulation and business rules.
+
+8. **`config/`**
+   - Holds configuration files for different parts of the application.
+   - `supabaseClient.js` sets up the connection to the Supabase database.
+
+### How It All Fits Together
+
+1. A request comes in and is routed by Express based on the definitions in the `routes/` folder.
+2. The appropriate middleware in `middleware/` is applied (e.g., JWT validation, request validation).
+3. The route handler in `controllers/` processes the request.
+4. If needed, the controller calls functions from `services/` to perform business logic or data operations.
+5. Services interact with the database using the Supabase client configured in `config/`.
+6. Data is validated against schemas defined in `models/`.
+7. The response is sent back to the client.
+8. Any errors are caught by the error handling middleware and appropriately responded to.
+
+### Model Validations
+
+We've implemented Joi for robust data validation in our models. Each model (e.g., `productModel.js`, `supplierModel.js`) now includes:
+
+- A main schema for full object validation
+- An update schema for partial updates
+- Validation functions for both creation and update operations
+
+Example (Product Model):
+
+```javascript
+const productSchema = Joi.object({
+  name: Joi.string().required().max(255).trim(),
+  retail_price_per_unit: Joi.number().min(0).required(),
+  selling_price_per_unit: Joi.number().min(0).required(),
+  quantity: Joi.number().integer().min(0).required(),
+  reorder_point: Joi.number().integer().min(0).required(),
+  // ... other fields
+});
+
+const productUpdateSchema = productSchema.fork(
+  Object.keys(productSchema.describe().keys),
+  (schema) => schema.optional()
+);
+```
+
+### Improved Controllers
+
+Controllers have been updated to provide more informative responses and better error handling:
+
+- Consistent use of JSON responses
+- Specific error codes (e.g., 404 for not found)
+- More detailed success messages
+- Improved error logging
+
+Example:
+
+```javascript
+export const addProduct = async (req, res) => {
+  try {
+    const newProduct = req.body;
+    const addedProduct = await addNewProduct(req.supabase, newProduct);
+    res
+      .status(201)
+      .json({ message: "Product added successfully", product: addedProduct });
+  } catch (error) {
+    console.error("Error in addProduct:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding the product" });
+  }
+};
+```
+
+### Validation Middleware
+
+A new `validateRequest` middleware has been added to handle request validation using Joi schemas:
+
+```javascript
+export const validateRequest = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errors = error.details.map((detail) => detail.message);
+      return res.status(400).json({ errors });
+    }
+    next();
+  };
+};
+```
+
+This middleware is used in routes to validate incoming request bodies before they reach the controller.
+
+## Best Practices Implemented
+
+1. **Separation of Concerns**: Clear separation between models, controllers, services, and routes.
+2. **Data Validation**: Robust input validation using Joi schemas.
+3. **Error Handling**: Centralized error handling with informative responses.
+4. **Code Organization**: Modular structure with clear file naming conventions.
+5. **Security**: JWT authentication and role-based access control.
+6. **Flexibility**: Support for both full and partial updates in models and controllers.
+7. **Consistent API Responses**: Standardized JSON response format across all endpoints.
 
 ## Security Improvements
 
@@ -116,6 +264,7 @@ root
 ### Profiles Table
 
 - `id`: UUID, Primary Key (references auth.users.id)
+- `user_id`: UUID, Foreign Key to users table
 - `full_name`: Full name
 - `role`: Role of the user (admin, manager, staff)
 - `cell_number`: Cell number
@@ -125,20 +274,21 @@ root
 ### Products Table
 
 - `id`: BIGINT, Primary Key
-- `supplier_id`: BIGINT, Foreign Key to suppliers table
 - `name`: Name of the product
 - `short_description`: Short description of the product
 - `long_description`: Long description of the product
 - `sku`: Stock Keeping Unit, unique
-- `retail_price_p`: Retail price of the product
-- `selling_price_`: Selling price of the product
+- `retail_price_price`: Retail price of the product
+- `selling_price_price`: Selling price of the product
 - `quantity`: Current quantity of the product
 - `reorder_point`: Minimum threshold quantity
 - `category_id`: BIGINT, Foreign Key to categories table
+- `supplier_id`: BIGINT, Foreign Key to suppliers table
 - `note`: Additional notes
 - `image_url`: URL of the product image
 - `measurement_`: Unit of measurement
 - `storage_location`: Storage location
+- `notes`: Additional notes
 - `created_at`: Creation date
 - `updated_at`: Last updated date
 
