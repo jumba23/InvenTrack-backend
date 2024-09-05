@@ -4,7 +4,7 @@ import express from "express";
 import * as productsController from "../controllers/productsController.js";
 import validateJWT from "../middleware/validateJWT.js";
 import { validateRequest } from "../middleware/validateRequest.js";
-import productSchema from "../models/productModel.js";
+import { productSchema, productUpdateSchema } from "../models/productModel.js";
 
 /**
  * Express router to mount product related functions on.
@@ -36,7 +36,11 @@ router.get("/", validateJWT, productsController.getAllProducts);
  * @param {callback[]} middleware - Express middlewares (JWT validation, request body validation)
  * @param {callback} controller - Express controller function
  */
-router.post("/", validateJWT, productsController.addProduct);
+router.post(
+  "/",
+  [validateJWT, validateRequest(productSchema)],
+  productsController.addProduct
+);
 
 /**
  * Route serving single product by ID.
@@ -48,11 +52,7 @@ router.post("/", validateJWT, productsController.addProduct);
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get(
-  "/:id",
-  [validateJWT, validateRequest(productSchema)],
-  productsController.getProductById
-);
+router.get("/:id", validateJWT, productsController.getProductById);
 
 /**
  * Route serving product update.
@@ -66,7 +66,7 @@ router.get(
  */
 router.put(
   "/:id",
-  [validateJWT, validateRequest(productSchema)],
+  [validateJWT, validateRequest(productUpdateSchema)],
   productsController.updateProduct
 );
 

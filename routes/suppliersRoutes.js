@@ -1,10 +1,12 @@
-// suppliersRoutes.js
-
+// routes/suppliersRoutes.js
 import express from "express";
 import * as suppliersController from "../controllers/suppliersController.js";
 import validateJWT from "../middleware/validateJWT.js";
 import { validateRequest } from "../middleware/validateRequest.js";
-import supplierSchema from "../models/supplierModel.js";
+import {
+  supplierSchema,
+  supplierUpdateSchema,
+} from "../models/supplierModel.js";
 
 /**
  * Express router to mount supplier related functions on.
@@ -66,7 +68,7 @@ router.get("/:id", validateJWT, suppliersController.getSupplierById);
  */
 router.put(
   "/:id",
-  [validateJWT, validateRequest(supplierSchema)],
+  [validateJWT, validateRequest(supplierUpdateSchema)],
   suppliersController.updateSupplier
 );
 
