@@ -75,6 +75,11 @@ app.use(
 // Attach middlewares (CORS, body-parser, etc.) to the Express application
 attachMiddleware(app, supabase);
 
+//root route
+app.get("/", (req, res) => {
+  res.send("InvenTrack Server is running!");
+});
+
 // API Routes
 app.use("/api/user", authRoute);
 app.use("/api/products", productsRoutes);
