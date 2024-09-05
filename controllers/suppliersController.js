@@ -1,4 +1,4 @@
-// suppliersController.js
+// controllers/suppliersController.js
 
 import {
   fetchAllSuppliers,
@@ -7,7 +7,6 @@ import {
   updateSupplierById,
   deleteSupplierById,
 } from "../services/suppliersService.js";
-// import { formatResponse } from "../utils/index.js";
 
 /**
  * Controller for handling supplier-related operations.
@@ -22,12 +21,12 @@ import {
 export const getAllSuppliers = async (req, res) => {
   try {
     const suppliers = await fetchAllSuppliers(req.supabase);
-    // const formattedResponse = formatResponse(suppliers);
-    // res.json(formattedResponse);
     res.json(suppliers);
   } catch (error) {
     console.error("Error in getAllSuppliers:", error);
-    res.status(500).send("An error occurred while fetching suppliers");
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching suppliers" });
   }
 };
 
@@ -39,12 +38,16 @@ export const getAllSuppliers = async (req, res) => {
 export const addSupplier = async (req, res) => {
   try {
     const newSupplier = req.body;
-    console.log("New Supplier:", newSupplier);
-    await addNewSupplier(req.supabase, newSupplier);
-    res.status(201).send("Supplier added successfully");
+    const addedSupplier = await addNewSupplier(req.supabase, newSupplier);
+    res.status(201).json({
+      message: "Supplier added successfully",
+      supplier: addedSupplier,
+    });
   } catch (error) {
     console.error("Error in addSupplier:", error);
-    res.status(500).send("An error occurred while adding the supplier");
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding the supplier" });
   }
 };
 
@@ -57,12 +60,15 @@ export const getSupplierById = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await fetchSupplierById(req.supabase, id);
-    // const formattedResponse = formatResponse(supplier);
-    // res.json(formattedResponse);
+    if (!supplier) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
     res.json(supplier);
   } catch (error) {
     console.error("Error in getSupplierById:", error);
-    res.status(500).send("An error occurred while fetching the supplier");
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the supplier" });
   }
 };
 
@@ -75,11 +81,16 @@ export const updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedSupplier = req.body;
-    await updateSupplierById(req.supabase, id, updatedSupplier);
-    res.send("Supplier updated successfully");
+    const result = await updateSupplierById(req.supabase, id, updatedSupplier);
+    if (!result) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
+    res.json({ message: "Supplier updated successfully", supplier: result });
   } catch (error) {
     console.error("Error in updateSupplier:", error);
-    res.status(500).send("An error occurred while updating the supplier");
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the supplier" });
   }
 };
 
@@ -91,10 +102,15 @@ export const updateSupplier = async (req, res) => {
 export const deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
-    await deleteSupplierById(req.supabase, id);
-    res.send("Supplier deleted successfully");
+    const result = await deleteSupplierById(req.supabase, id);
+    if (!result) {
+      return res.status(404).json({ error: "Supplier not found" });
+    }
+    res.json({ message: "Supplier deleted successfully" });
   } catch (error) {
     console.error("Error in deleteSupplier:", error);
-    res.status(500).send("An error occurred while deleting the supplier");
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the supplier" });
   }
 };
