@@ -119,22 +119,37 @@ export const login = async (req, res) => {
 /**
  * User Logout
  *
- * Signs out the user from Supabase and clears the authentication cookie.
+ * Signs out the user from Supabase, clears the authentication cookie,
+ * and invalidates the session.
  */
 export const logout = async (req, res) => {
-  const { logout } = req.body;
+  try {
+    // Sign out from Supabase
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
 
-  if (logout) {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+    // Clear the authentication cookie
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: "strict", // Protect against CSRF
+    });
 
-      res.clearCookie("authToken");
-      res.status(200).json({ message: "User logged out successfully" });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+    // Destroy the session
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Error destroying session:", err);
+        }
+      });
     }
-  } else {
-    res.status(400).json({ error: "Logout request not confirmed" });
+
+    // Set cache control headers to prevent caching of this response
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "An error occurred during logout" });
   }
 };
