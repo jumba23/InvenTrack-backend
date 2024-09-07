@@ -55,7 +55,7 @@ const productSchema = Joi.object({
     .allow(null, "")
     .max(500)
     .description("URL of the product image"),
-  measurement: Joi.string()
+  measurement_unit: Joi.string()
     .allow(null, "")
     .max(50)
     .description("Unit of measurement"),
