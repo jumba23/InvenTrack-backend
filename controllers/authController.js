@@ -113,7 +113,9 @@ export const login = async (req, res) => {
       secure: process.env.NODE_ENV === "production", // Use secure in production - false in development
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' in production, 'lax' in development
       domain:
-        process.env.NODE_ENV === "production" ? ".vercel.app" : "localhost", // Use vercel.app in production
+        process.env.NODE_ENV === "production"
+          ? ".inventrackapp.com"
+          : "localhost", // Use .inventrackapp.com in production
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
     console.log("Cookie set, sending response");
