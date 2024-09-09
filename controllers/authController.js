@@ -77,25 +77,34 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Authenticate user with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
     if (error) throw error;
 
     const { user, session } = data;
+
+    // Check if email is verified
     if (!user.email_confirmed_at) {
-      throw new Error("Email not verified");
+      return res.status(403).json({ error: "Email not verified" });
     }
 
-    // Generate and set JWT
+    // Generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
+
+    // Set cookie
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production", // Use secure in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' in production, 'lax' in development
+      domain:
+        process.env.NODE_ENV === "production" ? ".vercel.app" : "localhost", // Use .vercel.app in production
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
     // Retrieve user profile
@@ -108,10 +117,12 @@ export const login = async (req, res) => {
     if (profileError) throw profileError;
 
     // Store session token
-    req.session.user = { token: session.access_token };
+    // req.session.user = { token: session.access_token };
 
+    // Send response
     res.status(200).json({ user, profile });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(400).json({ error: error.message });
   }
 };
