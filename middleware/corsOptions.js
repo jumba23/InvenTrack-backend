@@ -1,8 +1,19 @@
-// CORS configuration to allow requests from the frontend domain
+// CORS configuration to allow requests from both local and deployed frontend
+const allowedOrigins = [
+  "http://localhost:3000", // Local development
+  "https://your-deployed-frontend.vercel.app", // Deployed frontend on Vercel
+];
+
 const corsOptions = {
-  // origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
-  origin: "http://localhost:3000", // Specify the frontend's origin.
-  credentials: true, // Accept cookies via cross-origin requests.
+  origin: function (origin, callback) {
+    // Check if the incoming request's origin is in the allowedOrigins array
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true); // Allow the request
+    } else {
+      callback(new Error("Not allowed by CORS")); // Reject the request
+    }
+  },
+  credentials: true, // Accept cookies via cross-origin requests
 };
 
 export default corsOptions;
