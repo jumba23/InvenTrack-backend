@@ -1,7 +1,7 @@
 // CORS configuration to allow requests from both local and deployed frontend
 const allowedOrigins = [
   "http://localhost:3000", // Local development
-  "https://your-deployed-frontend.vercel.app", // Deployed frontend on Vercel
+  "https://invent-track-frontend.vercel.app/", // Deployed frontend on Vercel
 ];
 
 const corsOptions = {
