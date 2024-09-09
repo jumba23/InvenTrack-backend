@@ -1,10 +1,17 @@
 /**
- * Server Configuration
+ * Server Configuration for Serverless Environment
  *
- * This file sets up and configures the Express server for the application.
- * It includes middleware for logging, CORS, body parsing, cookie parsing,
- * and session management. It also sets up routing for different API endpoints
- * and establishes a connection to Supabase for database interactions.
+ * This file sets up and configures the Express server for the application,
+ * optimized for a serverless environment like Vercel. It includes middleware
+ * for logging, CORS, body parsing, and cookie parsing. It also sets up routing
+ * for different API endpoints and establishes a connection to Supabase for
+ * database interactions.
+ *
+ * Key changes for serverless deployment:
+ * - Removed file-based logging
+ * - Adjusted logger configuration for console-only output
+ * - Removed explicit server start (app.listen)
+ * - Modified export to use a handler function for serverless invocation
  *
  * @module server
  */
@@ -26,10 +33,9 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 /**
  * Winston logger configuration
  *
- * This creates a logger instance with the following characteristics:
- * - Logs are written to 'error.log' (for error level) and 'combined.log' (for all levels)
+ * This creates a logger instance optimized for serverless environments:
  * - Log format includes timestamp and is in JSON format for easy parsing
- * - Console logging is added in non-production environments
+ * - Logs are output to the console for cloud logging services to capture
  */
 export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
@@ -39,19 +45,11 @@ export const logger = winston.createLogger({
     winston.format.colorize({ all: true })
   ),
   transports: [
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
-  ],
-});
-
-// Add console logging in non-production environments
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
     new winston.transports.Console({
       format: winston.format.simple(),
-    })
-  );
-}
+    }),
+  ],
+});
 
 // Initialize Express application
 const app = express();
@@ -75,7 +73,7 @@ app.use(
 // Attach middlewares (CORS, body-parser, etc.) to the Express application
 attachMiddleware(app, supabase);
 
-//root route
+// Root route
 app.get("/", (req, res) => {
   res.send("InvenTrack Server is running!");
 });
@@ -109,9 +107,23 @@ app.use(
   })
 );
 
-// Start the server
-const port = process.env.PORT || 5000;
-app.listen(port, () => logger.info(`Server started on port ${port}`));
+/**
+ * Serverless function handler
+ *
+ * This function wraps the Express app for serverless environments.
+ * It's the entry point for handling requests in platforms like Vercel.
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+export default async function handler(req, res) {
+  await app(req, res);
+}
 
-// Export the Express app - only for Vercel deployment
-export default app;
+// Development server startup (will not be used in production)
+if (process.env.NODE_ENV !== "production") {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () =>
+    logger.info(`Development server started on port ${port}`)
+  );
+}
