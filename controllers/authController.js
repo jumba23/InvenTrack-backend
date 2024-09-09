@@ -103,10 +103,9 @@ export const login = async (req, res) => {
     // Set cookie
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure in production
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' in production, 'lax' in development
-      domain:
-        process.env.NODE_ENV === "production" ? "vercel.app" : "localhost", // Use vercel.app in production
+      secure: true, // Always use secure in production
+      sameSite: "none", // This allows cross-site cookie setting
+      domain: "vercel.app", // Set the domain to the common top-level domain
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
     console.log("Cookie set, sending response");
