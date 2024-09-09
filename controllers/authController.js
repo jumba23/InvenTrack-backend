@@ -74,6 +74,7 @@ export const signup = async (req, res) => {
  * Also retrieves and returns the user's profile information.
  */
 export const login = async (req, res) => {
+  console.log("Login attempt:", req.body.email);
   const { email, password } = req.body;
 
   try {
@@ -97,6 +98,7 @@ export const login = async (req, res) => {
       expiresIn: "24h",
     });
 
+    console.log("Setting cookie:", token);
     // Set cookie
     res.cookie("authToken", token, {
       httpOnly: true,
@@ -106,6 +108,7 @@ export const login = async (req, res) => {
         process.env.NODE_ENV === "production" ? "vercel.app" : "localhost", // Use vercel.app in production
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
+    console.log("Cookie set, sending response");
 
     // Retrieve user profile
     const { data: profile, error: profileError } = await supabase
