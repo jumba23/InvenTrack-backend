@@ -113,5 +113,7 @@ app.use(
 const port = process.env.PORT || 5000;
 app.listen(port, () => logger.info(`Server started on port ${port}`));
 
+console.log("Server starting in environment:", process.env.NODE_ENV);
+
 // Export the Express app - only for Vercel deployment
 export default app;
