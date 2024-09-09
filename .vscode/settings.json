@@ -1,6 +1,6 @@
 {
   "workbench.preferredDarkColorTheme": "GitHub Dark",
   "workbench.colorTheme": "GitHub Dark High Contrast",
-  "cSpell.words": ["Inven", "LOUGOUT", "supabase"],
+  "cSpell.words": ["Inven", "inventrackapp", "LOUGOUT", "supabase"],
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }
