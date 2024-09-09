@@ -86,7 +86,8 @@ export const login = async (req, res) => {
 
     if (error) throw error;
 
-    const { user, session } = data;
+    // const { user, session } = data;
+    const { user } = data;
 
     // Check if email is verified
     if (!user.email_confirmed_at) {
