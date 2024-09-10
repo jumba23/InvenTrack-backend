@@ -51,38 +51,26 @@ Create a `.env` file in the root directory with the following variables:
 - **`/api/products`**: Product-related operations
 - **`/api/suppliers`**: Supplier-related operations
 - **`/api/webhook`**: Webhook handling (currently for Moxie)
+- **`/api/storage`**: Profile image operations (upload, delete)
 
 ## Folder Structure
 
-```plaintext
-root
+```root
 ├── server.js                       # Entry point of the application
 ├── utils/                          # Utility functions and helpers
-│   ├── index.js
 │   ├── generateSecureToken.js
 │   └── logger.js
 ├── controllers/                    # Request handlers
 │   ├── authController.js
 │   ├── productsController.js
 │   ├── suppliersController.js
-│   └── webhookController.js
+│   ├── webhookController.js
+│   └── storageController.js        # Handles profile image operations
 ├── middleware/                     # Custom middleware functions
 │   ├── index.js
 │   ├── errorHandler.js
 │   ├── validateJWT.js
 │   └── checkMoxieToken.js
-<<<<<<< HEAD
-├── models/
-│   ├── userModel.js
-│   ├── productModel.js
-│   ├── supplierModel.js
-│   ├── categoryModel.js
-│   └── profileModel.js
-=======
-<<<<<<< Updated upstream
->>>>>>> 9e32155415466827315d0c7435c6dfa3a38904b9
-├── routes/
-=======
 ├── models/                         # Data models and validation schemas
 │   ├── userModel.js
 │   ├── productModel.js
@@ -90,14 +78,15 @@ root
 │   ├── categoryModel.js
 │   └── profileModel.js
 ├── routes/                         # API route definitions
->>>>>>> Stashed changes
 │   ├── authRoutes.js
 │   ├── productsRoutes.js
 │   ├── suppliersRoutes.js
-│   └── webhookRoutes.js
+│   ├── webhookRoutes.js
+│   └── storageRoutes.js            # Routes for profile image operations
 ├── services/                       # Business logic and data access
 │   ├── productServices.js
-│   └── suppliersServices.js
+│   ├── suppliersServices.js
+│   └── storageService.js           # Supabase Storage operations
 ├── config/                         # Configuration files
 │   └── supabaseClient.js
 ├── package.json                    # Project dependencies and scripts
@@ -334,10 +323,24 @@ This middleware is used in routes to validate incoming request bodies before the
 - `is_read`: BOOLEAN, Indicates if the notification has been read
 - `created_at`: TIMESTAMPTZ, Timestamp of notification creation
 
+## Supabase Storage Integration
+
+### Key Components
+
+- **storageController.js**: Handles the logic for uploading and retrieving profile images.
+- **storageService.js**: Contains the core functions for interacting with Supabase Storage.
+- **storageRoutes.js**: Defines the API endpoints for profile image operations.
+
+### API Endpoints
+
+- **POST** `/api/storage/:userId/profile-image`: Upload a profile image
+- **GET** `/api/storage/:userId/profile-image`: Retrieve a profile image URL
+
 ## Authentication
 
 - **JWT-based Authentication**: Provides secure authentication.
 - **User Roles**: Roles like admin, manager, and staff are defined for access control.
+- **Profile image**: operations require authentication. The system uses cookie-based authentication with an `authToken` cookie.
 
 ## Error Handling
 
