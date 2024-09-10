@@ -4,7 +4,8 @@ import Joi from "joi";
 /**
  * Joi schema for product creation and full updates.
  * This schema defines the structure and validation rules for product data.
- * Fields specified as required are: name, retail_price_per_unit, selling_price_per_unit, quantity, and reorder_point.
+ * Fields specified as required are: name, retail_price_per_unit, selling_price_per_unit,
+ * quantity_office_1, quantity_office_8, quantity_home, and reorder_point.
  */
 const productSchema = Joi.object({
   name: Joi.string().required().max(255).trim().description("Product name"),
@@ -16,11 +17,25 @@ const productSchema = Joi.object({
     .min(0)
     .required()
     .description("Selling price per unit"),
-  quantity: Joi.number()
+  quantity_office_1: Joi.number()
     .integer()
     .min(0)
     .required()
-    .description("Current quantity in stock"),
+    .description("Current quantity in Office 1"),
+  quantity_office_8: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .description("Current quantity in Office 8"),
+  quantity_home: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .description("Current quantity at Home"),
+  total_quantity: Joi.number()
+    .integer()
+    .min(0)
+    .description("Total quantity across all locations"),
   reorder_point: Joi.number()
     .integer()
     .min(0)
@@ -59,10 +74,9 @@ const productSchema = Joi.object({
     .allow(null, "")
     .max(50)
     .description("Unit of measurement"),
-  storage_location: Joi.string()
-    .allow(null, "")
-    .max(255)
-    .description("Storage location of the product"),
+  status: Joi.string()
+    .valid("out", "low", "normal")
+    .description("Current status of the product"),
 });
 
 /**
