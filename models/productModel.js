@@ -77,6 +77,12 @@ const productSchema = Joi.object({
   status: Joi.string()
     .valid("out", "low", "normal")
     .description("Current status of the product"),
+  stock_retail_value: Joi.number()
+    .min(0)
+    .description("Total retail value of stock (calculated)"),
+  stock_selling_value: Joi.number()
+    .min(0)
+    .description("Total selling value of stock (calculated)"),
 });
 
 /**
