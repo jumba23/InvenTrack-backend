@@ -274,28 +274,30 @@ This middleware is used in routes to validate incoming request bodies before the
 ### Products Table
 
 - `id`: BIGINT, Primary Key
-- `name`: Name of the product
+- `name`: Name of the product - REQUIRED
 - `short_description`: Short description of the product
 - `long_description`: Long description of the product
 - `sku`: Stock Keeping Unit, unique
-- `retail_price_price`: Retail price of the product
-- `selling_price_price`: Selling price of the product
-- `quantity`: Current quantity of the product
-- `reorder_point`: Minimum threshold quantity
+- `retail_price_price`: Retail price of the product - REQUIRED
+- `selling_price_price`: Selling price of the product - REQUIRED
+- `total_quantity`: Total current quantity of the product - REQUIRED
+- `quantity_office_1`: Quantity in Office 1 - REQUIRED
+- `quantity_office_8`: Quantity in Office 8 - REQUIRED
+- `quantity_home`: Quantity at Home - REQUIRED
+- `reorder_point`: Minimum threshold quantity - REQUIRED
 - `category_id`: BIGINT, Foreign Key to categories table
 - `supplier_id`: BIGINT, Foreign Key to suppliers table
 - `note`: Additional notes
 - `image_url`: URL of the product image
-- `measurement_`: Unit of measurement
-- `storage_location`: Storage location
-- `notes`: Additional notes
+- `measurement_unit`: Unit of measurement
+- `status`: Current status of the product (out, low, normal)
 - `created_at`: Creation date
 - `updated_at`: Last updated date
 
 ### Suppliers Table
 
 - `id`: BIGINT, Primary Key
-- `name`: Name of the supplier
+- `name`: Name of the supplier - REQUIRED
 - `contact_person`: Contact person's name
 - `email`: Email address
 - `phone`: Phone number
@@ -306,10 +308,29 @@ This middleware is used in routes to validate incoming request bodies before the
 ### Categories Table
 
 - `id`: BIGINT, Primary Key
-- `type`: Type of category (retail or service)
+- `type`: Type of category (retail or service) - REQUIRED
 - `name`: Name of the category
 - `created_at`: Creation date
 - `updated_at`: Last updated date
+
+### Product History Table
+
+- `id`: BIGINT, Primary Key
+- `product_id`: BIGINT, Foreign Key to products table
+- `action`: Type of action performed - REQUIRED
+- `quantity_change`: Change in quantity
+- `price_change`: Change in price
+- `performed_by`: Foreign Key to Profiles
+- `created_at`: Timestamp of the action
+
+### Notifications Table
+
+- `id`: BIGINT, Primary Key
+- `user_id`: UUID, Foreign Key to auth.users table
+- `product_id`: BIGINT, Foreign Key to products table
+- `message`: TEXT, Notification message - REQUIRED
+- `is_read`: BOOLEAN, Indicates if the notification has been read
+- `created_at`: TIMESTAMPTZ, Timestamp of notification creation
 
 ## Authentication
 
