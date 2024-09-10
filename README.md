@@ -278,8 +278,8 @@ This middleware is used in routes to validate incoming request bodies before the
 - `short_description`: Short description of the product
 - `long_description`: Long description of the product
 - `sku`: Stock Keeping Unit, unique
-- `retail_price_price`: Retail price of the product - REQUIRED
-- `selling_price_price`: Selling price of the product - REQUIRED
+- `retail_price_per_unit`: Retail price of the product - REQUIRED
+- `selling_price_per_unit`: Selling price of the product - REQUIRED
 - `total_quantity`: Total current quantity of the product - REQUIRED
 - `quantity_office_1`: Quantity in Office 1 - REQUIRED
 - `quantity_office_8`: Quantity in Office 8 - REQUIRED
@@ -288,6 +288,8 @@ This middleware is used in routes to validate incoming request bodies before the
 - `category_id`: BIGINT, Foreign Key to categories table
 - `supplier_id`: BIGINT, Foreign Key to suppliers table
 - `note`: Additional notes
+- `stock_retail_value`: Total retail value of stock (calculated)
+- `stock_selling_value`: Total selling value of stock (calculated)
 - `image_url`: URL of the product image
 - `measurement_unit`: Unit of measurement
 - `status`: Current status of the product (out, low, normal)
