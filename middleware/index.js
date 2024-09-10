@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import corsOptions from "./corsOptions.js";
+import fileUpload from "express-fileupload";
 // import session from "express-session";
 import cors from "cors";
 
@@ -18,6 +19,12 @@ const indexMiddleware = (app, supabase) => {
   // -----------------------------
   // It uses body-parser to parse incoming request bodies in a middleware before your handlers, available under the req.body property.
   app.use(bodyParser.json());
+
+  // Supabase Middleware for file uploads
+  // -----------------------------
+  // This middleware is essential for handling file uploads in your application.
+  // It uses the express-fileupload package to parse multipart/form-data requests and make the uploaded files available under req.files.
+  app.use(fileUpload());
 
   // Middleware to attach the Supabase client to requests
   app.use((req, res, next) => {

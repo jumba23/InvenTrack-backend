@@ -29,6 +29,14 @@ export default function errorHandler(err, req, res, next) {
   } else if (err.name === "ForbiddenError") {
     statusCode = 403;
     message = "Access denied";
+  } else if (err.name === "StorageError") {
+    // New error type for storage-related errors
+    statusCode = 500;
+    message = "Storage operation failed";
+  } else if (err.name === "FileUploadError") {
+    // New error type for file upload issues
+    statusCode = 400;
+    message = "File upload failed";
   }
 
   // Prepare the response

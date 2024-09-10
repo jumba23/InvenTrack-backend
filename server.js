@@ -29,6 +29,7 @@ import authRoute from "./routes/authRoutes.js";
 import productsRoutes from "./routes/productsRoutes.js";
 import suppliersRoutes from "./routes/suppliersRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import storageRoutes from "./routes/storageRoutes.js";
 
 /**
  * Winston logger configuration
@@ -83,6 +84,7 @@ app.use("/api/user", authRoute);
 app.use("/api/products", productsRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
+app.use("/api/storage", storageRoutes);
 
 // Catch 404 errors and forward them to the error handler
 app.use((req, res, next) => {
