@@ -976,6 +976,113 @@ Updates a notification to mark it as read.
   - **Code:** 500
   - **Content:** `{ "error": "An error occurred while updating the notification" }`
 
+## Storage
+
+### Upload Profile Image
+
+Uploads a new profile image for a user.
+
+- **URL:** `/storage/:userId/profile-image`
+- **Method:** `POST`
+- **URL Params:**
+  - `userId=[uuid]` (Required)
+- **Data Params:**
+  - Form-data with a file field named 'file'
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+    ```json
+    {
+      "message": "Profile image uploaded successfully",
+      "imageUrl": "https://your-supabase-url.supabase.co/storage/v1/object/public/profile-images/filename.jpg"
+    }
+    ```
+- **Error Response:**
+  - **Code:** 400
+  - **Content:** `{ "error": "No file uploaded" }`
+  - **Code:** 500
+  - **Content:** `{ "error": "Failed to upload profile image" }`
+- **Notes:**
+  - This endpoint requires authentication.
+  - The file should be an image (e.g., JPEG, PNG).
+  - The old image (if exists) will be deleted from storage.
+
+### Get Profile Image URL
+
+Retrieves the URL of a user's profile image.
+
+- **URL:** `/storage/:userId/profile-image`
+- **Method:** `GET`
+- **URL Params:**
+  - `userId=[uuid]` (Required)
+- **Data Params:** None
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+    ```json
+    {
+      "imageUrl": "https://your-supabase-url.supabase.co/storage/v1/object/public/profile-images/filename.jpg"
+    }
+    ```
+- **Error Response:**
+  - **Code:** 404
+  - **Content:** `{ "error": "Profile image not found" }`
+  - **Code:** 500
+  - **Content:** `{ "error": "Failed to fetch profile data" }`
+- **Notes:**
+  - This endpoint requires authentication.
+  - If no profile image is set, it will return a 404 error.
+
+### Update Profile Image
+
+Updates an existing profile image for a user.
+
+- **URL:** `/storage/:userId/profile-image`
+- **Method:** `PUT`
+- **URL Params:**
+  - `userId=[uuid]` (Required)
+- **Data Params:**
+  - Form-data with a file field named 'file'
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+    ```json
+    {
+      "message": "Profile image updated successfully",
+      "imageUrl": "https://your-supabase-url.supabase.co/storage/v1/object/public/profile-images/new-filename.jpg"
+    }
+    ```
+- **Error Response:**
+  - **Code:** 400
+  - **Content:** `{ "error": "No file uploaded" }`
+  - **Code:** 500
+  - **Content:** `{ "error": "Failed to update profile image" }`
+- **Notes:**
+  - This endpoint requires authentication.
+  - The old image will be deleted from storage.
+  - The file should be an image (e.g., JPEG, PNG).
+
+### Delete Profile Image
+
+Deletes the profile image of a user.
+
+- **URL:** `/storage/:userId/profile-image`
+- **Method:** `DELETE`
+- **URL Params:**
+  - `userId=[uuid]` (Required)
+- **Data Params:** None
+- **Success Response:**
+  - **Code:** 200
+  - **Content:** `{ "message": "Profile image deleted successfully" }`
+- **Error Response:**
+  - **Code:** 404
+  - **Content:** `{ "error": "Profile image not found" }`
+  - **Code:** 500
+  - **Content:** `{ "error": "An error occurred while deleting the profile image" }`
+- **Notes:**
+  - This endpoint requires authentication.
+  - This will remove the image from Supabase storage and update the user's profile.
+
 ## Error Codes
 
 - 400: Bad Request - The request was invalid or cannot be served. The exact error should be explained in the error payload.
