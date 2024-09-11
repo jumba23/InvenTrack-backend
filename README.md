@@ -58,11 +58,11 @@ Create a `.env` file in the root directory with the following variables:
 ```root
 ├── server.js                       # Entry point of the application
 ├── utils/                          # Utility functions and helpers
-│   ├── generateSecureToken.js
-│   └── logger.js
+│   └── generateSecureToken.js
 ├── controllers/                    # Request handlers
 │   ├── authController.js
 │   ├── productsController.js
+│   ├── profileController.js
 │   ├── suppliersController.js
 │   ├── webhookController.js
 │   └── storageController.js        # Handles profile image operations
@@ -80,6 +80,7 @@ Create a `.env` file in the root directory with the following variables:
 ├── routes/                         # API route definitions
 │   ├── authRoutes.js
 │   ├── productsRoutes.js
+│   ├── profilesRoutes.js
 │   ├── suppliersRoutes.js
 │   ├── webhookRoutes.js
 │   └── storageRoutes.js            # Routes for profile image operations
