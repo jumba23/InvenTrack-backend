@@ -451,6 +451,7 @@ Retrieves a list of all user profiles.
           "full_name": "John Doe",
           "role": "admin",
           "cell_number": "+1234567890",
+          "profile_image_url": "https://example.com/profile-image.jpg",
           "created_at": "2023-01-01T00:00:00Z",
           "updated_at": "2023-01-01T00:00:00Z"
         }
@@ -481,6 +482,7 @@ Retrieves a specific profile by its ID.
       "full_name": "John Doe",
       "role": "admin",
       "cell_number": "+1234567890",
+      "profile_image_url": "https://example.com/profile-image.jpg",
       "created_at": "2023-01-01T00:00:00Z",
       "updated_at": "2023-01-01T00:00:00Z"
     }
@@ -558,6 +560,7 @@ Updates an existing user profile.
         "full_name": "John Doe Updated",
         "role": "staff",
         "cell_number": "+1111222333",
+        "profile_image_url": "https://example.com/profile-image.jpg",
         "created_at": "2023-01-01T00:00:00Z",
         "updated_at": "2023-01-03T00:00:00Z"
       }
