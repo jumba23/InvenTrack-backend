@@ -27,6 +27,7 @@ import "express-async-errors"; // This package allows Express to handle async er
 // Import route modules
 import authRoute from "./routes/authRoutes.js";
 import productsRoutes from "./routes/productsRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 import suppliersRoutes from "./routes/suppliersRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
 import storageRoutes from "./routes/storageRoutes.js";
@@ -82,6 +83,7 @@ app.get("/", (req, res) => {
 // API Routes
 app.use("/api/user", authRoute);
 app.use("/api/products", productsRoutes);
+app.use("/api/profiles", profileRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
 app.use("/api/storage", storageRoutes);
