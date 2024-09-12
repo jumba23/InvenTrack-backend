@@ -52,7 +52,7 @@ router.post(
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.get("/:userId", validateJWT, profileController.getProfileById);
+router.get("/:id", validateJWT, profileController.getProfileById);
 
 /**
  * Route serving profile update.
@@ -65,7 +65,7 @@ router.get("/:userId", validateJWT, profileController.getProfileById);
  * @param {callback} controller - Express controller function
  */
 router.put(
-  "/:userId",
+  "/:id",
   [validateJWT, validateRequest(profileUpdateSchema)],
   profileController.updateProfile
 );
@@ -80,6 +80,6 @@ router.put(
  * @param {callback} middleware - Express middleware (JWT validation)
  * @param {callback} controller - Express controller function
  */
-router.delete("/:userId", validateJWT, profileController.deleteProfile);
+router.delete("/:id", validateJWT, profileController.deleteProfile);
 
 export default router;
