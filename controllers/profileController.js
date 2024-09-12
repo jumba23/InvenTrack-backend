@@ -93,14 +93,14 @@ export const createProfile = async (req, res) => {
  */
 export const updateProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
     const { error } = validateProfileUpdate(req.body);
     if (error) return res.status(400).json({ error: error.details[0].message });
 
     const { data, error: updateError } = await req.supabase
       .from("profiles")
       .update(req.body)
-      .eq("user_id", userId)
+      .eq("id", id)
       .select();
 
     if (updateError) throw updateError;
@@ -123,11 +123,8 @@ export const updateProfile = async (req, res) => {
  */
 export const deleteProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { error } = await req.supabase
-      .from("profiles")
-      .delete()
-      .eq("user_id", userId);
+    const { id } = req.params;
+    const { error } = await req.supabase.from("profiles").delete().eq("id", id);
 
     if (error) throw error;
 
