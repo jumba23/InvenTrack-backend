@@ -65,15 +65,6 @@ export const yourWebhookHandler = async (req, res) => {
         });
       }
 
-      // Uncomment for debugging purposes
-      // console.log("Webhook received with the following details:");
-      // console.log(`Product ID: ${product_id}`);
-      // console.log(`Product Name: ${product_name}`);
-      // console.log(`Unit Amount: ${unit_amount}`);
-      // console.log(`Date Processed: ${date_processed}`);
-      // console.log(`Client Name: ${client_name}`);
-      // console.log(`Total Price: ${total_price}`);
-
       return res.status(200).json({
         success: true,
         message: "Webhook processed successfully",
