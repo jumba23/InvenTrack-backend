@@ -9,7 +9,7 @@
 
 import { logger } from "../server.js";
 
-const BUCKET_NAME = "profile-images";
+const BUCKET_NAME = "inventrack-profile-images";
 
 /**
  * Upload Profile Image
