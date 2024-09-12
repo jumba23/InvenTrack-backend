@@ -15,7 +15,7 @@ const router = express.Router();
 
 /**
  * Route for uploading a profile image.
- * @name post/:userId/profile-image
+ * @name post/:userId/inventrack-profile-images
  * @function
  * @memberof module:routes/storageRoutes
  * @inner
@@ -24,14 +24,14 @@ const router = express.Router();
  * @param {callback} controller - Express controller function
  */
 router.post(
-  "/:userId/profile-image",
+  "/:userId/inventrack-profile-images",
   validateJWT,
   storageController.handleProfileImageUpload
 );
 
 /**
  * Route for retrieving a profile image URL.
- * @name get/:userId/profile-image
+ * @name get/:userId/profile-images
  * @function
  * @memberof module:routes/storageRoutes
  * @inner
@@ -40,7 +40,7 @@ router.post(
  * @param {callback} controller - Express controller function
  */
 router.get(
-  "/:userId/profile-image",
+  "/:userId/inventrack-profile-images",
   validateJWT,
   storageController.getProfileImage
 );
