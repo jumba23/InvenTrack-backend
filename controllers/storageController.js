@@ -25,6 +25,8 @@ export const handleProfileImageUpload = async (req, res, next) => {
     const { userId } = req.params;
     const { file } = req.files;
 
+    console.log("image file", file);
+
     if (!file) {
       const uploadError = new Error("No file uploaded");
       uploadError.name = "FileUploadError";
