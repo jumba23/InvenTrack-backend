@@ -24,7 +24,7 @@ const router = express.Router();
  * @param {callback} controller - Express controller function
  */
 router.post(
-  "/:userId/inventrack-profile-images",
+  "/:userId/profile-image",
   validateJWT,
   storageController.handleProfileImageUpload
 );
@@ -40,7 +40,7 @@ router.post(
  * @param {callback} controller - Express controller function
  */
 router.get(
-  "/:userId/inventrack-profile-images",
+  "/:userId/profile-image",
   validateJWT,
   storageController.getProfileImage
 );
