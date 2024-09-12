@@ -41,11 +41,11 @@ export const getAllProfiles = async (req, res) => {
  */
 export const getProfileById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
     const { data, error } = await req.supabase
       .from("profiles")
       .select("*")
-      .eq("user_id", userId)
+      .eq("id", id)
       .single();
 
     if (error) throw error;
