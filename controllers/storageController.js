@@ -21,6 +21,7 @@ import { logger } from "../server.js";
  * @param {Function} next - Express next middleware function
  */
 export const handleProfileImageUpload = async (req, res, next) => {
+  console.log("image upload params", req.params);
   try {
     const { userId } = req.params;
     const { file } = req.files;
