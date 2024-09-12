@@ -7,7 +7,7 @@ import Joi from "joi";
  * Fields specified as required are: user_id, full_name, and role.
  */
 const profileSchema = Joi.object({
-  user_id: Joi.string()
+  id: Joi.string()
     .uuid()
     .required()
     .description("Unique identifier for the user"),
