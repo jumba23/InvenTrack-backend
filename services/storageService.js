@@ -27,7 +27,7 @@ export const uploadProfileImage = async (supabase, fileName, fileBuffer) => {
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(fileName, fileBuffer, {
-        contentType: "image/jpeg", // Adjust based on actual file type
+        contentType: "image/jpeg",
         upsert: true,
       });
 
