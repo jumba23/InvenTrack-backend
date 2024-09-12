@@ -121,20 +121,20 @@ export const login = async (req, res) => {
     console.log("Cookie set, sending response");
 
     // Retrieve user profile
-    // const { data: profile, error: profileError } = await supabase
-    //   .from("profiles")
-    //   .select("*")
-    //   .eq("user_id", user.id)
-    //   .single();
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
 
-    // if (profileError) throw profileError;
+    if (profileError) throw profileError;
 
     // Store session token
     // req.session.user = { token: session.access_token };
 
     // Send response
-    // res.status(200).json({ user, profile });
-    res.status(200).json({ user });
+    res.status(200).json({ user, profile });
+    // res.status(200).json({ user });
   } catch (error) {
     console.error("Login error:", error);
     res.status(400).json({ error: error.message });
