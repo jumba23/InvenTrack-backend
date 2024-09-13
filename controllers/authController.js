@@ -78,7 +78,6 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Authenticate user with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -86,41 +85,31 @@ export const login = async (req, res) => {
 
     if (error) throw error;
 
-    // const { user, session } = data;
     const { user } = data;
 
-    // Check if email is verified
     if (!user.email_confirmed_at) {
       return res.status(403).json({ error: "Email not verified" });
     }
 
-    // Generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    console.log("Login attempt for:", email);
-    console.log("Environment:", process.env.NODE_ENV);
-    console.log("Setting cookie with options:", {
+
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      domain:
-        process.env.NODE_ENV === "production" ? ".vercel.app" : "localhost",
-    });
-    // Set cookie
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure in production - false in development
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' in production, 'lax' in development
-      domain:
-        process.env.NODE_ENV === "production"
-          ? ".inventrackapp.com"
-          : "localhost", // Use .inventrackapp.com in production
+      domain: process.env.COOKIE_DOMAIN || undefined,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
-    console.log("Cookie set, sending response");
+      path: "/",
+    };
 
-    // Retrieve user profile
+    console.log("Setting cookie with options:", cookieOptions);
+
+    res.cookie("authToken", token, cookieOptions);
+
+    console.log("Cookie set, retrieving user profile");
+
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
@@ -129,12 +118,8 @@ export const login = async (req, res) => {
 
     if (profileError) throw profileError;
 
-    // Store session token
-    // req.session.user = { token: session.access_token };
-
-    // Send response
+    console.log("Profile retrieved, sending response");
     res.status(200).json({ user, profile });
-    // res.status(200).json({ user });
   } catch (error) {
     console.error("Login error:", error);
     res.status(400).json({ error: error.message });
@@ -147,9 +132,8 @@ export const login = async (req, res) => {
  * Signs out the user from Supabase, clears the authentication cookie,
  * and invalidates the session.
  */
-export const logout = async (req, res, next) => {
+export const logout = async (req, res) => {
   try {
-    // Sign out from Supabase
     const { error: supabaseError } = await supabase.auth.signOut({
       scope: "global",
     });
@@ -159,35 +143,16 @@ export const logout = async (req, res, next) => {
 
     console.log("Supabase signOut successful");
 
-    // Clear the authentication cookie
-    res.cookie("authToken", "", {
+    const cookieOptions = {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       domain: process.env.COOKIE_DOMAIN || undefined,
       path: "/",
-    });
+    };
 
+    res.clearCookie("authToken", cookieOptions);
     console.log("Authentication cookie cleared");
-
-    // Destroy the session
-    if (req.session) {
-      await new Promise((resolve, reject) => {
-        req.session.destroy((err) => {
-          if (err) {
-            console.log("Error destroying session:", err);
-            reject(new Error("Error destroying session"));
-          } else {
-            console.log("Session destroyed successfully");
-            res.clearCookie("connect.sid", { path: "/" });
-            resolve();
-          }
-        });
-      });
-    } else {
-      console.log("No session to destroy");
-    }
 
     // Set cache control headers
     res.setHeader(
@@ -196,6 +161,9 @@ export const logout = async (req, res, next) => {
     );
     res.setHeader("Expires", "-1");
     res.setHeader("Pragma", "no-cache");
+
+    // Add Clear-Site-Data header
+    res.setHeader("Clear-Site-Data", '"cookies", "storage"');
 
     console.log("Logout process completed successfully");
     res.status(200).json({ message: "User logged out successfully" });
