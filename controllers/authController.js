@@ -149,20 +149,14 @@ export const login = async (req, res) => {
  */
 export const logout = async (req, res, next) => {
   try {
-    logger.info("Logout process started", {
-      userId: req.user ? req.user.id : "unknown",
-    });
-
     // Sign out from Supabase
     const { error: supabaseError } = await supabase.auth.signOut({
       scope: "global",
     });
     if (supabaseError) {
-      logger.error("Supabase signOut error", { error: supabaseError });
       throw new Error("Failed to sign out from Supabase");
     }
 
-    logger.info("Supabase signOut successful");
     console.log("Supabase signOut successful");
 
     // Clear the authentication cookie
@@ -174,7 +168,6 @@ export const logout = async (req, res, next) => {
       path: "/",
     });
 
-    logger.info("Authentication cookie cleared");
     console.log("Authentication cookie cleared");
 
     // Destroy the session
@@ -182,17 +175,17 @@ export const logout = async (req, res, next) => {
       await new Promise((resolve, reject) => {
         req.session.destroy((err) => {
           if (err) {
-            logger.error("Session destruction error", { error: err });
+            console.log("Error destroying session:", err);
             reject(new Error("Error destroying session"));
           } else {
-            logger.info("Session destroyed successfully");
+            console.log("Session destroyed successfully");
             res.clearCookie("connect.sid", { path: "/" });
             resolve();
           }
         });
       });
     } else {
-      logger.info("No session to destroy");
+      console.log("No session to destroy");
     }
 
     // Set cache control headers
@@ -203,15 +196,10 @@ export const logout = async (req, res, next) => {
     res.setHeader("Expires", "-1");
     res.setHeader("Pragma", "no-cache");
 
-    logger.info("Logout process completed successfully");
     console.log("Logout process completed successfully");
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     console.error("Logout process failed", {
-      error: error.message,
-      stack: error.stack,
-    });
-    logger.error("Logout process failed", {
       error: error.message,
       stack: error.stack,
     });
