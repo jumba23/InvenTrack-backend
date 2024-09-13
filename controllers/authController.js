@@ -162,9 +162,10 @@ export const logout = async (req, res, next) => {
     // Clear the authentication cookie
     res.cookie("authToken", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "strict",
-      expires: new Date(0),
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      domain: process.env.COOKIE_DOMAIN || undefined,
       path: "/",
     });
 
