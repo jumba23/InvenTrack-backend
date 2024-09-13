@@ -6,6 +6,7 @@ import supabase from "../config/supabaseClient.js";
  *
  * This controller handles user authentication operations including signup, login, and logout.
  * It interacts with Supabase for user management and uses JWT for secure authentication.
+ * It supports both local development and production environments with multiple subdomains.
  */
 
 /**
@@ -14,11 +15,9 @@ import supabase from "../config/supabaseClient.js";
  * Registers a new user with Supabase and creates a profile in the 'profiles' table.
  */
 export const signup = async (req, res) => {
-  // req.body is already validated by the middleware
   const { email, password, firstName, lastName, cellNumber } = req.body;
 
   try {
-    // Create user in Supabase
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -46,7 +45,6 @@ export const signup = async (req, res) => {
       throw new Error("User data is incomplete.");
     }
 
-    // Insert user profile into 'profiles' table
     const { error: insertError } = await supabase.from("profiles").insert({
       user_id: userData.id,
       full_name: `${firstName} ${lastName}`,
@@ -95,11 +93,12 @@ export const login = async (req, res) => {
       expiresIn: "24h",
     });
 
+    const isProduction = process.env.NODE_ENV === "production";
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      domain: process.env.COOKIE_DOMAIN || undefined,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      domain: isProduction ? ".inventrackapp.com" : undefined,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       path: "/",
     };
@@ -143,16 +142,33 @@ export const logout = async (req, res) => {
 
     console.log("Supabase signOut successful");
 
+    const isProduction = process.env.NODE_ENV === "production";
+
+    // Clear cookie for all scenarios
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      domain: process.env.COOKIE_DOMAIN || undefined,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     };
 
-    res.clearCookie("authToken", cookieOptions);
-    console.log("Authentication cookie cleared");
+    if (isProduction) {
+      // Clear for main domain
+      res.clearCookie("authToken", {
+        ...cookieOptions,
+        domain: ".inventrackapp.com",
+      });
+      // Clear for API subdomain
+      res.clearCookie("authToken", {
+        ...cookieOptions,
+        domain: "api.inventrackapp.com",
+      });
+    } else {
+      // Clear for localhost
+      res.clearCookie("authToken", cookieOptions);
+    }
+
+    console.log("Authentication cookies cleared");
 
     // Set cache control headers
     res.setHeader(
