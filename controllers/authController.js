@@ -154,15 +154,16 @@ export const logout = async (req, res, next) => {
     });
 
     // Sign out from Supabase
-    const { error } = await supabase.auth.signOut({ scope: "global" });
-    if (error) {
-      logger.error("Supabase signOut error", { error });
-      const logoutError = new Error("Failed to sign out from Supabase");
-      logoutError.name = "LogoutError";
-      throw logoutError;
+    const { error: supabaseError } = await supabase.auth.signOut({
+      scope: "global",
+    });
+    if (supabaseError) {
+      logger.error("Supabase signOut error", { error: supabaseError });
+      throw new Error("Failed to sign out from Supabase");
     }
 
     logger.info("Supabase signOut successful");
+    console.log("Supabase signOut successful");
 
     // Clear the authentication cookie
     res.cookie("authToken", "", {
@@ -174,46 +175,49 @@ export const logout = async (req, res, next) => {
     });
 
     logger.info("Authentication cookie cleared");
+    console.log("Authentication cookie cleared");
 
     // Destroy the session
     if (req.session) {
-      req.session.destroy((err) => {
-        if (err) {
-          logger.error("Session destruction error", { error: err });
-          const sessionError = new Error("Error destroying session");
-          sessionError.name = "LogoutError";
-          next(sessionError);
-          return;
-        }
-        logger.info("Session destroyed successfully");
-        res.clearCookie("connect.sid", { path: "/" });
-
-        // Set cache control headers
-        res.setHeader(
-          "Cache-Control",
-          "no-store, no-cache, must-revalidate, private"
-        );
-        res.setHeader("Expires", "-1");
-        res.setHeader("Pragma", "no-cache");
-
-        logger.info("Logout process completed successfully");
-        res.status(200).json({ message: "User logged out successfully" });
+      await new Promise((resolve, reject) => {
+        req.session.destroy((err) => {
+          if (err) {
+            logger.error("Session destruction error", { error: err });
+            reject(new Error("Error destroying session"));
+          } else {
+            logger.info("Session destroyed successfully");
+            res.clearCookie("connect.sid", { path: "/" });
+            resolve();
+          }
+        });
       });
     } else {
       logger.info("No session to destroy");
-      // If there's no session, just send the response
-      res.setHeader(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, private"
-      );
-      res.setHeader("Expires", "-1");
-      res.setHeader("Pragma", "no-cache");
-
-      logger.info("Logout process completed successfully");
-      res.status(200).json({ message: "User logged out successfully" });
     }
+
+    // Set cache control headers
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, private"
+    );
+    res.setHeader("Expires", "-1");
+    res.setHeader("Pragma", "no-cache");
+
+    logger.info("Logout process completed successfully");
+    console.log("Logout process completed successfully");
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    logger.error("Logout process failed", { error });
-    next(error); // Pass the error to the error handling middleware
+    console.error("Logout process failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    logger.error("Logout process failed", {
+      error: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({
+      error: "An error occurred during logout",
+      details: error.message,
+    });
   }
 };
