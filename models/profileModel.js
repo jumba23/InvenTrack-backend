@@ -1,4 +1,5 @@
 // models/profileModel.js
+import { Store } from "express-session";
 import Joi from "joi";
 
 /**
@@ -24,6 +25,7 @@ const profileSchema = Joi.object({
     .allow(null, "")
     .max(20)
     .description("Cell number of the user"),
+  store_name: Joi.string().required().max(255).description("Name of the store"),
   profile_image_url: Joi.string()
     .uri()
     .allow(null, "")
