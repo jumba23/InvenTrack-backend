@@ -258,6 +258,7 @@ This middleware is used in routes to validate incoming request bodies before the
 - `full_name`: Full name
 - `role`: Role of the user (admin, manager, staff)
 - `cell_number`: Cell number
+- `store_name`: Name of the store
 - `created_at`: Profile creation date
 - `updated_at`: Profile last updated date
 
