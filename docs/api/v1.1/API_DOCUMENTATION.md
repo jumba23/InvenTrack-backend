@@ -40,21 +40,22 @@ Retrieves a list of all products.
           "short_description": "Brief product description",
           "long_description": "Detailed product description",
           "sku": "PRD001",
-          "retail_price_per_unit": 19.99,
-          "selling_price_per_unit": 24.99,
-          "total_quantity": 100,
+          "retail_price_per_unit": 29.99,
+          "wholesale_price_per_unit": 14.99,
+          "total_quantity": 110,
           "quantity_office_1": 50,
           "quantity_office_8": 30,
           "quantity_home": 20,
+          "display_shelf": 10,
           "reorder_point": 20,
           "category_id": 1,
           "supplier_id": 1,
           "note": "Additional product notes",
           "image_url": "https://example.com/product-image.jpg",
-          "measurement_": "units",
+          "measurement_unit": "units",
           "status": "normal",
-          "stock_retail_value": 1999.0,
-          "stock_selling_value": 2499.0,
+          "stock_retail_value": 2999.0,
+          "stock_wholesale_value": 1499.0,
           "created_at": "2023-01-01T00:00:00Z",
           "updated_at": "2023-01-01T00:00:00Z"
         }
@@ -85,22 +86,23 @@ Retrieves a specific product by its ID.
       "short_description": "Brief product description",
       "long_description": "Detailed product description",
       "sku": "PRD001",
-      "retail_price_per_unit": 19.99,
-      "selling_price_per_unit": 24.99,
-      "total_quantity": 100,
+      "retail_price_per_unit": 29.99,
+      "wholesale_price_per_unit": 14.99,
+      "total_quantity": 110,
       "quantity_office_1": 50,
       "quantity_office_8": 30,
       "quantity_home": 20,
+      "display_shelf": 10,
       "reorder_point": 20,
       "category_id": 1,
       "supplier_id": 1,
       "note": "Additional product notes",
       "image_url": "https://example.com/product-image.jpg",
-      "measurement_": "units",
+      "measurement_unit": "units",
       "storage_location": "Warehouse A, Shelf 3",
       "notes": "Handle with care",
       "stock_retail_value": 1999.0,
-      "stock_selling_value": 2499.0,
+      "stock_wholesale_value": 2499.0,
       "created_at": "2023-01-01T00:00:00Z",
       "updated_at": "2023-01-01T00:00:00Z"
     }
@@ -126,16 +128,17 @@ Adds a new product to the inventory.
     "long_description": "Detailed description of new product",
     "sku": "PRD002",
     "retail_price_per_unit": 29.99, // REQUIRED
-    "selling_price_per_unit": 34.99, // REQUIRED
+    "wholesale_price_per_unit": 14.99, // REQUIRED
     "quantity_office_1": 25, // REQUIRED
     "quantity_office_8": 15, // REQUIRED
     "quantity_home": 10, // REQUIRED
+    "display_shelf": 10, // REQUIRED
     "reorder_point": 10, // REQUIRED
     "category_id": 2, // REQUIRED
     "supplier_id": 2, // REQUIRED
     "note": "New product notes",
     "image_url": "https://example.com/new-product-image.jpg",
-    "measurement_": "kg" // REQUIRED
+    "measurement_unit": "kg" // REQUIRED
   }
   ```
 - **Success Response:**
@@ -151,20 +154,21 @@ Adds a new product to the inventory.
         "long_description": "Detailed description of new product",
         "sku": "PRD002",
         "retail_price_per_unit": 29.99,
-        "selling_price_per_unit": 34.99,
-        "total_quantity": 50,
+        "wholesale_price_per_unit": 14.99,
+        "total_quantity": 60,
         "quantity_office_1": 25,
         "quantity_office_8": 15,
         "quantity_home": 10,
+        "display_shelf": 10,
         "reorder_point": 10,
         "category_id": 2,
         "supplier_id": 2,
         "note": "New product notes",
         "image_url": "https://example.com/new-product-image.jpg",
-        "measurement_": "kg",
+        "measurement_unit": "kg",
         "status": "normal",
         "stock_retail_value": 1499.5,
-        "stock_selling_value": 1749.5,
+        "stock_wholesale_value": 1749.5,
         "created_at": "2023-01-02T00:00:00Z",
         "updated_at": "2023-01-02T00:00:00Z"
       }
@@ -192,16 +196,17 @@ Updates an existing product.
     "long_description": "Updated detailed description",
     "sku": "PRD001-UPD",
     "retail_price_per_unit": 21.99,
-    "selling_price_per_unit": 26.99,
+    "wholesale_price_per_unit": 16.99,
     "quantity_office_1": 60,
     "quantity_office_8": 40,
     "quantity_home": 30,
+    "display_shelf": 10,
     "reorder_point": 25,
     "category_id": 1,
     "supplier_id": 1,
     "note": "Updated product notes",
     "image_url": "https://example.com/updated-product-image.jpg",
-    "measurement_": "units"
+    "measurement_unit": "units"
   }
   ```
 - **Success Response:**
@@ -217,7 +222,7 @@ Updates an existing product.
         "long_description": "Updated detailed description",
         "sku": "PRD001-UPD",
         "retail_price_per_unit": 21.99,
-        "selling_price_per_unit": 26.99,
+        "wholesale_price_per_unit": 16.99,
         "total_quantity": 130,
         "quantity_office_1": 60,
         "quantity_office_8": 40,
@@ -227,10 +232,10 @@ Updates an existing product.
         "supplier_id": 1,
         "note": "Updated product notes",
         "image_url": "https://example.com/updated-product-image.jpg",
-        "measurement_": "units",
+        "measurement_unit": "units",
         "status": "normal",
-        "stock_retail_value": 1499.5,
-        "stock_selling_value": 1749.5,
+        "stock_retail_value": 2499.5,
+        "stock_wholesale_value": 1749.5,
         "created_at": "2023-01-01T00:00:00Z",
         "updated_at": "2023-01-03T00:00:00Z"
       }
