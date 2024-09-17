@@ -69,7 +69,9 @@ Create a `.env` file in the root directory with the following variables:
 ├── middleware/                     # Custom middleware functions
 │   ├── index.js
 │   ├── errorHandler.js
+│   ├── corsOptions.js
 │   ├── validateJWT.js
+│   ├── validateRequest.js
 │   └── checkMoxieToken.js
 ├── models/                         # Data models and validation schemas
 │   ├── userModel.js
@@ -264,23 +266,25 @@ This middleware is used in routes to validate incoming request bodies before the
 
 ### Products Table
 
-- `id`: BIGINT, Primary Key
+`id`: BIGINT, Primary Key
+
 - `name`: Name of the product - REQUIRED
 - `short_description`: Short description of the product
 - `long_description`: Long description of the product
 - `sku`: Stock Keeping Unit, unique
 - `retail_price_per_unit`: Retail price of the product - REQUIRED
-- `selling_price_per_unit`: Selling price of the product - REQUIRED
+- `wholesale_price_per_unit`: Wholesale price of the product - REQUIRED
 - `total_quantity`: Total current quantity of the product - REQUIRED
 - `quantity_office_1`: Quantity in Office 1 - REQUIRED
 - `quantity_office_8`: Quantity in Office 8 - REQUIRED
 - `quantity_home`: Quantity at Home - REQUIRED
+- `display_shelf`: Quantity on office shelf - REQUIRED
 - `reorder_point`: Minimum threshold quantity - REQUIRED
 - `category_id`: BIGINT, Foreign Key to categories table
 - `supplier_id`: BIGINT, Foreign Key to suppliers table
 - `note`: Additional notes
 - `stock_retail_value`: Total retail value of stock (calculated)
-- `stock_selling_value`: Total selling value of stock (calculated)
+- `stock_wholesale_value`: Total wholesale value of stock (calculated)
 - `image_url`: URL of the product image
 - `measurement_unit`: Unit of measurement
 - `status`: Current status of the product (out, low, normal)
