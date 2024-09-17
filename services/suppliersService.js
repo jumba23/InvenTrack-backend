@@ -1,3 +1,8 @@
+// services/suppliersService.js
+
+import { handleSupabaseError } from "../utils/supabaseErrorHandler.js";
+import { NotFoundError, DatabaseError } from "../utils/customErrors.js";
+
 /**
  * suppliersService.js
  * This module contains functions for interacting with the suppliers table in the Supabase database.
@@ -100,8 +105,17 @@ export const fetchSupplierById = async (supabase, id) => {
       .eq("id", id)
       .single();
 
-    if (supplierError) throw supplierError;
-    if (!supplier) throw new Error("Supplier not found");
+    if (supplierError) {
+      console.log(
+        "Supabase error details:",
+        JSON.stringify(supplierError, null, 2)
+      );
+      throw handleSupabaseError(supplierError, "Supplier");
+    }
+
+    if (!supplier) {
+      throw new NotFoundError("Supplier not found");
+    }
 
     // Fetch products for this supplier
     const { data: products, error: productsError } = await supabase
@@ -109,7 +123,13 @@ export const fetchSupplierById = async (supabase, id) => {
       .select("total_quantity, retail_price_per_unit, wholesale_price_per_unit")
       .eq("supplier_id", id);
 
-    if (productsError) throw productsError;
+    if (productsError) {
+      console.log(
+        "Supabase products error details:",
+        JSON.stringify(productsError, null, 2)
+      );
+      throw handleSupabaseError(productsError, "Product");
+    }
 
     // Calculate additional metrics
     const stock_wholesale_value = products.reduce(
@@ -136,7 +156,7 @@ export const fetchSupplierById = async (supabase, id) => {
       total_quantity,
     };
   } catch (error) {
-    console.error(`Error fetching supplier with id ${id}:`, error.message);
+    console.error(`Error in fetchSupplierById for id ${id}:`, error);
     throw error;
   }
 };
