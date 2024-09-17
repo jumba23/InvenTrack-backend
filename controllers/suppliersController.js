@@ -56,19 +56,18 @@ export const addSupplier = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const getSupplierById = async (req, res) => {
+export const getSupplierById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const supplier = await fetchSupplierById(req.supabase, id);
-    if (!supplier) {
-      return res.status(404).json({ error: "Supplier not found" });
-    }
     res.json(supplier);
   } catch (error) {
     console.error("Error in getSupplierById:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching the supplier" });
+    if (error.message === "Supplier not found") {
+      res.status(404).json({ error: "Supplier not found" });
+    } else {
+      next(error); // Pass the error to the centralized error handler
+    }
   }
 };
 
