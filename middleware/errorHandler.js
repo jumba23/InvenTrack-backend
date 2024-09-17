@@ -1,9 +1,17 @@
-// Centralized error handling
+// middleware/errorHandler.js
+
 import { logger } from "../server.js";
+import {
+  NotFoundError,
+  ValidationError,
+  ConflictError,
+  AuthorizationError,
+} from "../utils/customErrors.js";
 
 export default function errorHandler(err, req, res, next) {
   // Log the error
   logger.error("Error:", {
+    name: err.name,
     message: err.message,
     stack: err.stack,
     url: req.originalUrl,
@@ -12,43 +20,22 @@ export default function errorHandler(err, req, res, next) {
     userId: req.user ? req.user.id : "unauthenticated",
   });
 
-  // Set a default status code and message
-  let statusCode = 500;
-  let message = "An unexpected error occurred";
-
-  // Handle specific error types
-  if (err.name === "ValidationError") {
-    statusCode = 400;
-    message = "Invalid input data";
-  } else if (err.name === "UnauthorizedError") {
-    statusCode = 401;
-    message = "Authentication required";
-  } else if (err.message === "Not found") {
-    statusCode = 404;
-    message = "Resource not found";
-  } else if (err.name === "ForbiddenError") {
-    statusCode = 403;
-    message = "Access denied";
-  } else if (err.name === "StorageError") {
-    statusCode = 500;
-    message = "Storage operation failed";
-  } else if (err.name === "FileUploadError") {
-    statusCode = 400;
-    message = "File upload failed";
-  } else if (err.name === "LogoutError") {
-    statusCode = 500;
-    message = "Logout operation failed";
-  }
+  // Determine the status code
+  let statusCode = err.status || 500;
+  if (err instanceof NotFoundError) statusCode = 404;
+  else if (err instanceof ValidationError) statusCode = 400;
+  else if (err instanceof ConflictError) statusCode = 409;
+  else if (err instanceof AuthorizationError) statusCode = 403;
 
   // Prepare the response
   const response = {
     error: {
-      message,
+      message: err.message || "An unexpected error occurred",
       status: statusCode,
     },
   };
 
-  // Include stack trace in development environment
+  // Include stack trace only in development environment
   if (process.env.NODE_ENV === "development") {
     response.error.stack = err.stack;
   }
