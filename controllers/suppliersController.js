@@ -62,12 +62,7 @@ export const getSupplierById = async (req, res, next) => {
     const supplier = await fetchSupplierById(req.supabase, id);
     res.json(supplier);
   } catch (error) {
-    console.error("Error in getSupplierById:", error);
-    if (error.message === "Supplier not found") {
-      res.status(404).json({ error: "Supplier not found" });
-    } else {
-      next(error); // Pass the error to the centralized error handler
-    }
+    next(error);
   }
 };
 
