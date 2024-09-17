@@ -4,19 +4,19 @@ import Joi from "joi";
 /**
  * Joi schema for product creation and full updates.
  * This schema defines the structure and validation rules for product data.
- * Fields specified as required are: name, retail_price_per_unit, selling_price_per_unit,
+ * Fields specified as required are: name, wholesale_price_per_unit, retail_price_per_unit,
  * quantity_office_1, quantity_office_8, quantity_home, and reorder_point.
  */
 const productSchema = Joi.object({
   name: Joi.string().required().max(255).trim().description("Product name"),
+  wholesale_price_per_unit: Joi.number()
+    .min(0)
+    .required()
+    .description("Wholesale price per unit"),
   retail_price_per_unit: Joi.number()
     .min(0)
     .required()
     .description("Retail price per unit"),
-  selling_price_per_unit: Joi.number()
-    .min(0)
-    .required()
-    .description("Selling price per unit"),
   quantity_office_1: Joi.number()
     .integer()
     .min(0)
@@ -32,16 +32,18 @@ const productSchema = Joi.object({
     .min(0)
     .required()
     .description("Current quantity at Home"),
-  total_quantity: Joi.number()
+  display_shelf: Joi.number()
     .integer()
     .min(0)
-    .description("Total quantity across all locations"),
+    .allow(null)
+    .default(0)
+    .description("Quantity on display shelf"),
   reorder_point: Joi.number()
     .integer()
     .min(0)
     .required()
     .description("Quantity at which to reorder"),
-  // Additional fields that are optional
+  // Additional fields that are optional or generated
   short_description: Joi.string()
     .allow(null, "")
     .max(500)
@@ -76,13 +78,8 @@ const productSchema = Joi.object({
     .description("Unit of measurement"),
   status: Joi.string()
     .valid("out", "low", "normal")
+    .default("normal")
     .description("Current status of the product"),
-  stock_retail_value: Joi.number()
-    .min(0)
-    .description("Total retail value of stock (calculated)"),
-  stock_selling_value: Joi.number()
-    .min(0)
-    .description("Total selling value of stock (calculated)"),
 });
 
 /**

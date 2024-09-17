@@ -1,5 +1,4 @@
 // models/profileModel.js
-import { Store } from "express-session";
 import Joi from "joi";
 
 /**
