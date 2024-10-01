@@ -7,8 +7,12 @@ import {
   ConflictError,
   AuthorizationError,
 } from "../utils/customErrors.js";
+import * as Sentry from "@sentry/node";
 
 export default function errorHandler(err, req, res, next) {
+  // Capture exception with Sentry
+  Sentry.captureException(err);
+
   // Log the error
   logger.error("Error:", {
     name: err.name,
