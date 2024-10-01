@@ -24,7 +24,6 @@ import errorHandler from "./middleware/errorHandler.js";
 import supabase from "./config/supabaseClient.js";
 import "express-async-errors"; // This package allows Express to handle async errors automatically
 import * as Sentry from "@sentry/node";
-import { ProfilingIntegration } from "@sentry/profiling-node";
 
 // Import route modules
 import authRoute from "./routes/authRoutes.js";
