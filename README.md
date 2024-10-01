@@ -58,6 +58,8 @@ Create a `.env` file in the root directory with the following variables:
 ```root
 ├── server.js                       # Entry point of the application
 ├── utils/                          # Utility functions and helpers
+│   ├── customErrors.js
+│   ├── supabaseErrorHandler.js
 │   └── generateSecureToken.js
 ├── controllers/                    # Request handlers
 │   ├── authController.js
