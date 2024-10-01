@@ -5,12 +5,14 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --import ./instrument.js server.js",
     "dev": "node --env-file=.env server.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@sentry/node": "^8.32.0",
+    "@sentry/profiling-node": "^8.32.0",
     "@supabase/supabase-js": "^2.45.2",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
