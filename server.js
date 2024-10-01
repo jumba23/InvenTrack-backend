@@ -23,6 +23,8 @@ import attachMiddleware from "./middleware/index.js";
 import errorHandler from "./middleware/errorHandler.js";
 import supabase from "./config/supabaseClient.js";
 import "express-async-errors"; // This package allows Express to handle async errors automatically
+import * as Sentry from "@sentry/node";
+import { ProfilingIntegration } from "@sentry/profiling-node";
 
 // Import route modules
 import authRoute from "./routes/authRoutes.js";
@@ -31,6 +33,21 @@ import profileRoutes from "./routes/profileRoutes.js";
 import suppliersRoutes from "./routes/suppliersRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
 import storageRoutes from "./routes/storageRoutes.js";
+
+/**
+ * Sentry initialization
+ *
+ * This initializes the Sentry SDK with your DSN and enables the ProfilingIntegration.
+ * The tracesSampleRate and profilesSampleRate are set to 1.0 to capture all traces and profiles.
+ *
+ */
+
+Sentry.init({
+  dsn: "https://ee33fed96d649b64d39ee0d661e22990@o4508049798135808.ingest.us.sentry.io/4508049802199040",
+  integrations: [new ProfilingIntegration()],
+  tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+});
 
 /**
  * Winston logger configuration
@@ -97,6 +114,11 @@ app.use("/api/profiles", profileRoutes);
 app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/webhook", webhookRoutes);
 app.use("/api/storage", storageRoutes);
+
+// Sentry debug route
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
 
 // Catch 404 errors and forward them to the error handler
 app.use((req, res, next) => {
