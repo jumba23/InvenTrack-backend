@@ -1,3 +1,5 @@
+//middleware/index.js
+
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import corsOptions from "./corsOptions.js";
