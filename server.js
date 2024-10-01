@@ -43,7 +43,7 @@ import storageRoutes from "./routes/storageRoutes.js";
 
 // Ensure to call this before importing any other modules!
 Sentry.init({
-  dsn: "https://ee33fed96d649b64d39ee0d661e22990@o4508049798135808.ingest.us.sentry.io/4508049802199040",
+  dsn: process.env.SENTRY_DSN,
 
   // Add Tracing by setting tracesSampleRate
   // We recommend adjusting this value in production
