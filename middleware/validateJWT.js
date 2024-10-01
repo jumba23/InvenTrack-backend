@@ -18,8 +18,6 @@ import jwt from "jsonwebtoken";
  */
 const validateJWT = (req, res, next) => {
   const token = req.cookies.authToken;
-  // Uncomment the following line for debugging
-  // console.log("server request cookies: ", req.cookies);
 
   if (!token) {
     console.log("No token found");
