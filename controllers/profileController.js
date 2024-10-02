@@ -13,24 +13,24 @@ import {
   validateProfileUpdate,
 } from "../models/profileModel.js";
 import { logger } from "../server.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * Get all profiles
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const getAllProfiles = async (req, res) => {
+export const getAllProfiles = async (req, res, next) => {
   try {
     const { data, error } = await req.supabase.from("profiles").select("*");
 
-    if (error) throw error;
+    if (error) throw new ApiError(500, "Failed to fetch profiles");
 
     res.json(data);
   } catch (error) {
     logger.error("Error in getAllProfiles:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching profiles" });
+    next(error);
   }
 };
 
@@ -38,8 +38,9 @@ export const getAllProfiles = async (req, res) => {
  * Get a profile by user ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const getProfileById = async (req, res) => {
+export const getProfileById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { data, error } = await req.supabase
@@ -48,15 +49,13 @@ export const getProfileById = async (req, res) => {
       .eq("id", id)
       .single();
 
-    if (error) throw error;
-    if (!data) return res.status(404).json({ error: "Profile not found" });
+    if (error) throw new ApiError(500, "Failed to fetch the profile");
+    if (!data) throw new ApiError(404, "Profile not found");
 
     res.json(data);
   } catch (error) {
     logger.error("Error in getProfileById:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching the profile" });
+    next(error);
   }
 };
 
@@ -64,25 +63,24 @@ export const getProfileById = async (req, res) => {
  * Create a new profile
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const createProfile = async (req, res) => {
+export const createProfile = async (req, res, next) => {
   try {
     const { error } = validateProfile(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) throw new ApiError(400, error.details[0].message);
 
     const { data, error: insertError } = await req.supabase
       .from("profiles")
       .insert([req.body])
       .select();
 
-    if (insertError) throw insertError;
+    if (insertError) throw new ApiError(500, "Failed to create the profile");
 
     res.status(201).json(data[0]);
   } catch (error) {
     logger.error("Error in createProfile:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while creating the profile" });
+    next(error);
   }
 };
 
@@ -90,12 +88,13 @@ export const createProfile = async (req, res) => {
  * Update a profile
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { error } = validateProfileUpdate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) throw new ApiError(400, error.details[0].message);
 
     const { data, error: updateError } = await req.supabase
       .from("profiles")
@@ -103,16 +102,13 @@ export const updateProfile = async (req, res) => {
       .eq("id", id)
       .select();
 
-    if (updateError) throw updateError;
-    if (data.length === 0)
-      return res.status(404).json({ error: "Profile not found" });
+    if (updateError) throw new ApiError(500, "Failed to update the profile");
+    if (data.length === 0) throw new ApiError(404, "Profile not found");
 
     res.json(data[0]);
   } catch (error) {
     logger.error("Error in updateProfile:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating the profile" });
+    next(error);
   }
 };
 
@@ -120,19 +116,18 @@ export const updateProfile = async (req, res) => {
  * Delete a profile
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const deleteProfile = async (req, res) => {
+export const deleteProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { error } = await req.supabase.from("profiles").delete().eq("id", id);
 
-    if (error) throw error;
+    if (error) throw new ApiError(500, "Failed to delete the profile");
 
     res.json({ message: "Profile deleted successfully" });
   } catch (error) {
     logger.error("Error in deleteProfile:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while deleting the profile" });
+    next(error);
   }
 };
