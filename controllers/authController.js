@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import supabase from "../config/supabaseClient.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * Authentication Controller
@@ -14,7 +15,7 @@ import supabase from "../config/supabaseClient.js";
  *
  * Registers a new user with Supabase and creates a profile in the 'profiles' table.
  */
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   const { email, password, firstName, lastName, cellNumber } = req.body;
 
   try {
@@ -32,17 +33,17 @@ export const signup = async (req, res) => {
 
     if (error) {
       if (error.message.includes("Email rate limit exceeded")) {
-        return res.status(429).json({
-          error:
-            "Too many signup attempts. Please try again later or use a different email address.",
-        });
+        throw new ApiError(
+          429,
+          "Too many signup attempts. Please try again later or use a different email address."
+        );
       }
-      throw error;
+      throw new ApiError(400, error.message);
     }
 
     const userData = data?.user;
     if (!userData || !userData.id) {
-      throw new Error("User data is incomplete.");
+      throw new ApiError(500, "User data is incomplete.");
     }
 
     const { error: insertError } = await supabase.from("profiles").insert({
@@ -52,7 +53,7 @@ export const signup = async (req, res) => {
       email,
     });
 
-    if (insertError) throw insertError;
+    if (insertError) throw new ApiError(500, insertError.message);
 
     res.status(201).json({
       message:
@@ -60,8 +61,7 @@ export const signup = async (req, res) => {
       user: userData,
     });
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
@@ -71,7 +71,7 @@ export const signup = async (req, res) => {
  * Authenticates a user, creates a JWT, and sets it as an HTTP-only cookie.
  * Also retrieves and returns the user's profile information.
  */
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   console.log("Login attempt:", req.body.email);
   const { email, password } = req.body;
 
@@ -81,12 +81,12 @@ export const login = async (req, res) => {
       password,
     });
 
-    if (error) throw error;
+    if (error) throw new ApiError(401, error.message);
 
     const { user } = data;
 
     if (!user.email_confirmed_at) {
-      return res.status(403).json({ error: "Email not verified" });
+      throw new ApiError(403, "Email not verified");
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
@@ -115,13 +115,12 @@ export const login = async (req, res) => {
       .eq("user_id", user.id)
       .single();
 
-    if (profileError) throw profileError;
+    if (profileError) throw new ApiError(500, profileError.message);
 
     console.log("Profile retrieved, sending response");
     res.status(200).json({ user, profile });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
@@ -131,13 +130,13 @@ export const login = async (req, res) => {
  * Signs out the user from Supabase, clears the authentication cookie,
  * and invalidates the session.
  */
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
   try {
     const { error: supabaseError } = await supabase.auth.signOut({
       scope: "global",
     });
     if (supabaseError) {
-      throw new Error("Failed to sign out from Supabase");
+      throw new ApiError(500, "Failed to sign out from Supabase");
     }
 
     console.log("Supabase signOut successful");
@@ -184,13 +183,6 @@ export const logout = async (req, res) => {
     console.log("Logout process completed successfully");
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    console.error("Logout process failed", {
-      error: error.message,
-      stack: error.stack,
-    });
-    res.status(500).json({
-      error: "An error occurred during logout",
-      details: error.message,
-    });
+    next(error);
   }
 };
