@@ -1,7 +1,7 @@
 // services/suppliersService.js
 
 import { handleSupabaseError } from "../utils/supabaseErrorHandler.js";
-import { NotFoundError, DatabaseError } from "../utils/customErrors.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * suppliersService.js
@@ -13,7 +13,7 @@ import { NotFoundError, DatabaseError } from "../utils/customErrors.js";
  * Fetches all suppliers from the database.
  * @param {object} supabase - The Supabase client instance.
  * @returns {Promise<Array>} A promise that resolves to an array of supplier objects.
- * @throws {Error} If there's an error fetching the suppliers.
+ * @throws {ApiError} If there's an error fetching the suppliers.
  */
 export const fetchAllSuppliers = async (supabase) => {
   try {
@@ -65,7 +65,7 @@ export const fetchAllSuppliers = async (supabase) => {
     return enhancedSuppliers;
   } catch (error) {
     console.error("Error fetching all suppliers:", error.message);
-    throw error;
+    throw new ApiError(500, "Failed to fetch suppliers");
   }
 };
 
@@ -74,7 +74,7 @@ export const fetchAllSuppliers = async (supabase) => {
  * @param {object} supabase - The Supabase client instance.
  * @param {object} supplier - The supplier object to be added.
  * @returns {Promise<object>} A promise that resolves to the newly created supplier object.
- * @throws {Error} If there's an error adding the supplier.
+ * @throws {ApiError} If there's an error adding the supplier.
  */
 export const addNewSupplier = async (supabase, supplier) => {
   try {
@@ -86,7 +86,7 @@ export const addNewSupplier = async (supabase, supplier) => {
     return data[0]; // Return the first (and only) inserted supplier
   } catch (error) {
     console.error("Error adding new supplier:", error.message);
-    throw error;
+    throw new ApiError(500, "Failed to add new supplier");
   }
 };
 
@@ -95,7 +95,7 @@ export const addNewSupplier = async (supabase, supplier) => {
  * @param {object} supabase - The Supabase client instance.
  * @param {number|string} id - The ID of the supplier to fetch.
  * @returns {Promise<object>} A promise that resolves to the supplier object.
- * @throws {Error} If there's an error fetching the supplier or if it's not found.
+ * @throws {ApiError} If there's an error fetching the supplier or if it's not found.
  */
 export const fetchSupplierById = async (supabase, id) => {
   try {
@@ -114,7 +114,7 @@ export const fetchSupplierById = async (supabase, id) => {
     }
 
     if (!supplier) {
-      throw new NotFoundError("Supplier not found");
+      throw new ApiError(404, "Supplier not found");
     }
 
     // Fetch products for this supplier
@@ -157,7 +157,11 @@ export const fetchSupplierById = async (supabase, id) => {
     };
   } catch (error) {
     console.error(`Error in fetchSupplierById for id ${id}:`, error);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    } else {
+      throw new ApiError(500, "Failed to fetch supplier");
+    }
   }
 };
 
@@ -167,7 +171,7 @@ export const fetchSupplierById = async (supabase, id) => {
  * @param {number|string} id - The ID of the supplier to update.
  * @param {object} supplier - The updated supplier data.
  * @returns {Promise<object>} A promise that resolves to the updated supplier object.
- * @throws {Error} If there's an error updating the supplier or if it's not found.
+ * @throws {ApiError} If there's an error updating the supplier or if it's not found.
  */
 export const updateSupplierById = async (supabase, id, supplier) => {
   try {
@@ -178,11 +182,15 @@ export const updateSupplierById = async (supabase, id, supplier) => {
       .select()
       .single();
     if (error) throw error;
-    if (!data) throw new Error("Supplier not found");
+    if (!data) throw new ApiError(404, "Supplier not found");
     return data;
   } catch (error) {
     console.error(`Error updating supplier with id ${id}:`, error.message);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    } else {
+      throw new ApiError(500, "Failed to update supplier");
+    }
   }
 };
 
@@ -191,7 +199,7 @@ export const updateSupplierById = async (supabase, id, supplier) => {
  * @param {object} supabase - The Supabase client instance.
  * @param {number|string} id - The ID of the supplier to delete.
  * @returns {Promise<object>} A promise that resolves to the deleted supplier object.
- * @throws {Error} If there's an error deleting the supplier or if it's not found.
+ * @throws {ApiError} If there's an error deleting the supplier or if it's not found.
  */
 export const deleteSupplierById = async (supabase, id) => {
   try {
@@ -202,10 +210,14 @@ export const deleteSupplierById = async (supabase, id) => {
       .select()
       .single();
     if (error) throw error;
-    if (!data) throw new Error("Supplier not found");
+    if (!data) throw new ApiError(404, "Supplier not found");
     return data;
   } catch (error) {
     console.error(`Error deleting supplier with id ${id}:`, error.message);
-    throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    } else {
+      throw new ApiError(500, "Failed to delete supplier");
+    }
   }
 };
