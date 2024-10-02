@@ -8,6 +8,7 @@
  */
 
 import { logger } from "../server.js";
+import ApiError from "../utils/apiError.js";
 
 const BUCKET_NAME = "inventrack-profile-images";
 
@@ -20,7 +21,8 @@ const BUCKET_NAME = "inventrack-profile-images";
  * @param {Object} supabase - Supabase client instance
  * @param {string} fileName - Name to be used for the file in storage
  * @param {Buffer} fileBuffer - File data as a Buffer
- * @returns {Promise<Object>} Object containing publicUrl or error
+ * @returns {Promise<Object>} Object containing publicUrl
+ * @throws {ApiError} If there's an error during the upload process
  */
 export const uploadProfileImage = async (supabase, fileName, fileBuffer) => {
   try {
@@ -33,7 +35,7 @@ export const uploadProfileImage = async (supabase, fileName, fileBuffer) => {
 
     if (error) {
       logger.error("Error uploading to Supabase Storage:", error);
-      return { error };
+      throw new ApiError(500, "Failed to upload image to storage");
     }
 
     const { data: urlData, error: urlError } = supabase.storage
@@ -42,15 +44,19 @@ export const uploadProfileImage = async (supabase, fileName, fileBuffer) => {
 
     if (urlError) {
       logger.error("Error getting public URL:", urlError);
-      return { error: urlError };
+      throw new ApiError(500, "Failed to get public URL for uploaded image");
     }
 
     return { publicUrl: urlData.publicUrl };
   } catch (error) {
     logger.error("Unexpected error in uploadProfileImage:", error);
-    const storageError = new Error("Failed to upload image to storage");
-    storageError.name = "StorageError";
-    throw storageError;
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(
+      500,
+      "An unexpected error occurred while uploading the image"
+    );
   }
 };
 
@@ -62,7 +68,8 @@ export const uploadProfileImage = async (supabase, fileName, fileBuffer) => {
  * @async
  * @param {Object} supabase - Supabase client instance
  * @param {string} fileName - Name of the file in storage
- * @returns {Promise<Object>} Object containing publicUrl or error
+ * @returns {Promise<Object>} Object containing publicUrl
+ * @throws {ApiError} If there's an error retrieving the public URL
  */
 export const getProfileImageUrl = async (supabase, fileName) => {
   try {
@@ -72,12 +79,18 @@ export const getProfileImageUrl = async (supabase, fileName) => {
 
     if (error) {
       logger.error("Error getting public URL:", error);
-      return { error };
+      throw new ApiError(500, "Failed to get public URL for the image");
     }
 
     return { publicUrl: data.publicUrl };
   } catch (error) {
     logger.error("Unexpected error in getProfileImageUrl:", error);
-    return { error };
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(
+      500,
+      "An unexpected error occurred while getting the image URL"
+    );
   }
 };
