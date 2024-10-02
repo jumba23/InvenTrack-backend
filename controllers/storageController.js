@@ -9,6 +9,7 @@
 
 import { uploadProfileImage as uploadProfileImageService } from "../services/storageService.js";
 import { logger } from "../server.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * Handle Profile Image Upload
@@ -29,9 +30,7 @@ export const handleProfileImageUpload = async (req, res, next) => {
     console.log("image file", file);
 
     if (!file) {
-      const uploadError = new Error("No file uploaded");
-      uploadError.name = "FileUploadError";
-      throw uploadError;
+      throw new ApiError(400, "No file uploaded");
     }
 
     const fileName = `profile_${userId}_${Date.now()}.${file.name
@@ -45,7 +44,7 @@ export const handleProfileImageUpload = async (req, res, next) => {
 
     if (error) {
       logger.error("Error uploading profile image:", error);
-      return res.status(500).json({ error: "Failed to upload profile image" });
+      throw new ApiError(500, "Failed to upload profile image");
     }
 
     // Update user profile with new image URL
@@ -56,9 +55,7 @@ export const handleProfileImageUpload = async (req, res, next) => {
 
     if (profileError) {
       logger.error("Error updating profile with new image URL:", profileError);
-      return res
-        .status(500)
-        .json({ error: "Failed to update profile with new image URL" });
+      throw new ApiError(500, "Failed to update profile with new image URL");
     }
 
     res.status(200).json({
@@ -92,11 +89,11 @@ export const getProfileImage = async (req, res, next) => {
 
     if (profileError) {
       logger.error("Error fetching profile data:", profileError);
-      return res.status(500).json({ error: "Failed to fetch profile data" });
+      throw new ApiError(500, "Failed to fetch profile data");
     }
 
     if (!profile || !profile.profile_image_url) {
-      return res.status(404).json({ error: "Profile image not found" });
+      throw new ApiError(404, "Profile image not found");
     }
 
     res.status(200).json({ imageUrl: profile.profile_image_url });
