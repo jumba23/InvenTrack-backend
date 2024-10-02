@@ -7,6 +7,7 @@ import {
   updateProductById,
   deleteProductById,
 } from "../services/productsService.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * Controller for handling product-related operations.
@@ -17,16 +18,15 @@ import {
  * Get all products
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res, next) => {
   try {
     const products = await fetchAllProducts(req.supabase);
     res.json(products);
   } catch (error) {
     console.error("Error in getAllProducts:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching products" });
+    next(new ApiError(500, "An error occurred while fetching products"));
   }
 };
 
@@ -34,8 +34,9 @@ export const getAllProducts = async (req, res) => {
  * Add a new product
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const addProduct = async (req, res) => {
+export const addProduct = async (req, res, next) => {
   try {
     const newProduct = req.body;
     const addedProduct = await addNewProduct(req.supabase, newProduct);
@@ -44,9 +45,7 @@ export const addProduct = async (req, res) => {
       .json({ message: "Product added successfully", product: addedProduct });
   } catch (error) {
     console.error("Error in addProduct:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while adding the product" });
+    next(new ApiError(500, "An error occurred while adding the product"));
   }
 };
 
@@ -54,20 +53,23 @@ export const addProduct = async (req, res) => {
  * Get a product by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const getProductById = async (req, res) => {
+export const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await fetchProductById(req.supabase, id);
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      throw new ApiError(404, "Product not found");
     }
     res.json(product);
   } catch (error) {
     console.error("Error in getProductById:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching the product" });
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while fetching the product"));
+    }
   }
 };
 
@@ -75,21 +77,24 @@ export const getProductById = async (req, res) => {
  * Update a product by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updatedProduct = req.body;
     const result = await updateProductById(req.supabase, id, updatedProduct);
     if (!result) {
-      return res.status(404).json({ error: "Product not found" });
+      throw new ApiError(404, "Product not found");
     }
     res.json({ message: "Product updated successfully", product: result });
   } catch (error) {
     console.error("Error in updateProduct:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating the product" });
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while updating the product"));
+    }
   }
 };
 
@@ -97,19 +102,22 @@ export const updateProduct = async (req, res) => {
  * Delete a product by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await deleteProductById(req.supabase, id);
     if (!result) {
-      return res.status(404).json({ error: "Product not found" });
+      throw new ApiError(404, "Product not found");
     }
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("Error in deleteProduct:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while deleting the product" });
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while deleting the product"));
+    }
   }
 };
