@@ -1,17 +1,18 @@
 // middleware/errorHandler.js
 
 import { logger } from "../server.js";
-import {
-  NotFoundError,
-  ValidationError,
-  ConflictError,
-  AuthorizationError,
-} from "../utils/customErrors.js";
 import * as Sentry from "@sentry/node";
+import ApiError from "../utils/apiError.js";
 
 export default function errorHandler(err, req, res, next) {
-  // Capture exception with Sentry
-  Sentry.captureException(err);
+  let error = err;
+
+  // If the error is not an instance of ApiError, create a new one
+  if (!(err instanceof ApiError)) {
+    const statusCode = error.statusCode || 500;
+    const message = error.message || "Internal Server Error";
+    error = new ApiError(statusCode, message, false, err.stack);
+  }
 
   // Log the error
   logger.error("Error:", {
@@ -24,26 +25,25 @@ export default function errorHandler(err, req, res, next) {
     userId: req.user ? req.user.id : "unauthenticated",
   });
 
-  // Determine the status code
-  let statusCode = err.status || 500;
-  if (err instanceof NotFoundError) statusCode = 404;
-  else if (err instanceof ValidationError) statusCode = 400;
-  else if (err instanceof ConflictError) statusCode = 409;
-  else if (err instanceof AuthorizationError) statusCode = 403;
+  // Capture exception with Sentry
+  Sentry.captureException(err);
 
   // Prepare the response
   const response = {
     error: {
-      message: err.message || "An unexpected error occurred",
-      status: statusCode,
+      status: error.statusCode,
+      message: error.message,
+      timestamp: error.timestamp,
     },
   };
 
-  // Include stack trace only in development environment
   if (process.env.NODE_ENV === "development") {
-    response.error.stack = err.stack;
+    response.error.stack = error.stack;
+    response.error.details = {
+      query: req.query,
+      body: req.body,
+    };
   }
 
-  // Send the response
-  res.status(statusCode).json(response);
+  res.status(error.statusCode).json(response);
 }
