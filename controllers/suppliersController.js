@@ -7,6 +7,7 @@ import {
   updateSupplierById,
   deleteSupplierById,
 } from "../services/suppliersService.js";
+import ApiError from "../utils/apiError.js";
 
 /**
  * Controller for handling supplier-related operations.
@@ -17,16 +18,15 @@ import {
  * Get all suppliers
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const getAllSuppliers = async (req, res) => {
+export const getAllSuppliers = async (req, res, next) => {
   try {
     const suppliers = await fetchAllSuppliers(req.supabase);
     res.json(suppliers);
   } catch (error) {
     console.error("Error in getAllSuppliers:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching suppliers" });
+    next(new ApiError(500, "An error occurred while fetching suppliers"));
   }
 };
 
@@ -34,8 +34,9 @@ export const getAllSuppliers = async (req, res) => {
  * Add a new supplier
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const addSupplier = async (req, res) => {
+export const addSupplier = async (req, res, next) => {
   try {
     const newSupplier = req.body;
     const addedSupplier = await addNewSupplier(req.supabase, newSupplier);
@@ -45,9 +46,7 @@ export const addSupplier = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in addSupplier:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while adding the supplier" });
+    next(new ApiError(500, "An error occurred while adding the supplier"));
   }
 };
 
@@ -55,14 +54,23 @@ export const addSupplier = async (req, res) => {
  * Get a supplier by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
 export const getSupplierById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const supplier = await fetchSupplierById(req.supabase, id);
+    if (!supplier) {
+      throw new ApiError(404, "Supplier not found");
+    }
     res.json(supplier);
   } catch (error) {
-    next(error);
+    console.error("Error in getSupplierById:", error);
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while fetching the supplier"));
+    }
   }
 };
 
@@ -70,21 +78,24 @@ export const getSupplierById = async (req, res, next) => {
  * Update a supplier by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const updateSupplier = async (req, res) => {
+export const updateSupplier = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updatedSupplier = req.body;
     const result = await updateSupplierById(req.supabase, id, updatedSupplier);
     if (!result) {
-      return res.status(404).json({ error: "Supplier not found" });
+      throw new ApiError(404, "Supplier not found");
     }
     res.json({ message: "Supplier updated successfully", supplier: result });
   } catch (error) {
     console.error("Error in updateSupplier:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while updating the supplier" });
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while updating the supplier"));
+    }
   }
 };
 
@@ -92,19 +103,22 @@ export const updateSupplier = async (req, res) => {
  * Delete a supplier by its ID
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
-export const deleteSupplier = async (req, res) => {
+export const deleteSupplier = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await deleteSupplierById(req.supabase, id);
     if (!result) {
-      return res.status(404).json({ error: "Supplier not found" });
+      throw new ApiError(404, "Supplier not found");
     }
     res.json({ message: "Supplier deleted successfully" });
   } catch (error) {
     console.error("Error in deleteSupplier:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while deleting the supplier" });
+    if (error instanceof ApiError) {
+      next(error);
+    } else {
+      next(new ApiError(500, "An error occurred while deleting the supplier"));
+    }
   }
 };
