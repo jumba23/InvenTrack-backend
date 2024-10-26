@@ -11,10 +11,5 @@
     "securepassword",
     "supabase"
   ],
-  "CodeGPT.apiKey": "CodeGPT Plus Beta",
-  "cody.index.exclude": [
-    "**/docs/api/**",
-    "**/docs/api/v1.0/**",
-    "**/docs/api/v1.1/**"
-  ]
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }
